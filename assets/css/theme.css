@@ -1,0 +1,78 @@
+:root {
+    --bg-color: #1f1e1e;
+    --bg-color-secondary: #3a3838;
+    --primary-color: #bd1c1c;
+    --secondary-color: #7c1111;
+    --t-color: #e0dede;
+}
+
+hr {
+    position: relative; /* Necessario per posizionare l'ombra */
+    height: 0; /* Imposta l'altezza a 0 per non mostrare la linea */
+    margin: 30px 0; /* Aggiungi margine per distanziare gli elementi */
+    background: transparent; /* Assicurati che non ci sia un colore di sfondo */
+}
+
+
+body {
+    background-color: var(--bg-color);
+    color: var(--t-color);
+}
+
+header, main{
+    background-color: var(--bg-color-secondary);
+}
+
+footer {
+    z-index: 1030; 
+    background-color: #1f1e1e;
+    box-shadow: 0 -4px 6px #1f1e1e;  
+}
+
+.nb a {
+    color: var(--t-color);
+}
+
+
+.nb a:active,
+.nb a:focus,
+.nb a:hover {
+    color: var(--t-color);
+}
+
+a {
+    color: var(--primary-color);
+}
+
+a:active,
+a:focus,
+a:hover {
+    color: var(--secondary-color);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border: 1px solid var(--bg-color);
+}
+
+.btn-primary:hover,
+.btn-primary:active {
+    background-color: var(--secondary-color);
+    border: 1px solid var(--bg-color);
+}
+
+.form-control:focus {
+    box-shadow: 0 0 12px var(--primary-color);
+}
+
+.form-check-input:active,
+.form-check-input:focus,
+.form-check-input:checked {
+    background-color: var(--primary-color);
+    border: 1px solid var(--secondary-color);
+    box-shadow: 0 0 12px var(--secondary-color);
+}
+
+.bi{
+    font-size: 2.2rem;
+}

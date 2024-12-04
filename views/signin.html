@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Registrati</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+  <link rel="stylesheet" href="css/theme.css">
+</head>
+
+<body class="d-flex align-items-center justify-content-center min-vh-100 py-4 ">
+  <main class="m-auto text-center col col-12 col-md-6 col-lg-4">
+    <div class="form-signin p-4 rounded">
+      <div class="alert alert-danger d-none" id="alert" role="alert"></div>
+      <section class="pb-4">
+        <form id="loginForm">
+          <h1 class="mb-4">Registrati</h1>
+
+          <div class="row g-3">
+            <div class="form-floating  col-12 col-md-6">
+              <input type="email" class="form-control rounded" id="email" name="email" placeholder="" required>
+              <label for="email">Email</label>
+            </div>
+
+            <div class="form-floating mb-3 col-12 col-md-6">
+              <input type="email" class="form-control rounded" id="emailCheck" name="emailCheck" placeholder="" required>
+              <label for="emailCheck">Conferma Email</label>
+            </div>
+
+          </div>
+          <div class="row g-3">
+            <div class="form-floating col-12 col-md-6">
+              <input type="password" class="form-control rounded" id="password" name="password" placeholder="" required>
+              <label for="password">Password</label>
+            </div>
+
+            <div class="form-floating mb-3 col-12 col-md-6">
+              <input type="password" class="form-control rounded" id="passwordCheck" name="passwordCheck"
+                placeholder="" required>
+              <label for="passwordCheck">Conferma Password</label>
+            </div>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control rounded" id="username" name="username" placeholder="" required>
+            <label for="username">Username</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control rounded" id="fs" name="fs" placeholder="" required>
+            <label for="fs">Supereroe preferito</label>
+          </div>
+
+          <div class="form-check text-start my-3">
+
+            <input class="form-check-input" type="checkbox" value="remember-me" id="remember_me" name="remember_me">
+            <label class="form-check-label" for="remember_me">
+              Ricordami
+            </label>
+
+          </div>
+          <hr>
+          <span>Giá iscritto? <a href="./login.html">Accedi</a></span>
+
+          <button class="btn btn-primary w-100 py-2 my-3" type="submit">Registrati</button>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+    crossorigin="anonymous"></script>
+
+  <script>
+    const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&-_])[A-Za-z\d@$!%*?&-_]{8,}$/;
+
+    async function register(email, psw, username, fs) {
+      if (!regex.test(psw)) {
+        console.log(psw)
+        return { success: false, message: 'Password non valida.' }
+      }
+
+      try {
+        const resp = await fetch("http://localhost:8080/register", {
+          method: "POST",
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ "email": email, "password": psw, "username":  username, "favourite_superhero": fs}),
+          redirect: "follow"
+        });
+        console.log(resp);
+        if (resp.ok) {
+          const js = await resp.json();
+          return { success: true, id: js._id };
+        } else {
+          return resp.json();
+        }
+      } catch (error) {
+        console.log(error)
+        return { success: false, message: 'Credenziali Errate.' };
+      }
+    }
+
+
+    async function handleSubmit() {
+      const email = document.getElementById('email');
+      const cemail = document.getElementById('emailCheck');
+      const psw = document.getElementById('password');
+      const cpsw = document.getElementById('passwordCheck');
+      const usr = document.getElementById('username');
+      const sp = document.getElementById('fs');
+      var flag = false;
+
+      email.classList.remove('border', 'border-danger');
+      cemail.classList.remove('border', 'border-danger');
+      psw.classList.remove('border', 'border-danger');
+      cpsw.classList.remove('border', 'border-danger');
+      usr.classList.remove('border', 'border-danger');
+
+      if(email.value != cemail.value){ 
+        email.classList.add('border', 'border-danger');
+        cemail.classList.add('border', 'border-danger');
+        flag = true;
+      }
+
+      if(psw.value != cpsw.value){
+        psw.classList.add('border', 'border-danger');
+        cpsw.classList.add('border', 'border-danger');
+        flag = true;
+      }
+
+      if(usr.value.length < 5){
+        usr.classList.add('border', 'border-danger');
+        flag = true;
+      }
+
+      if(flag){ return; }
+
+      const r = await register(email.value, psw.value, usr.value, sp.value);
+      return r;
+    }
+
+    document.getElementById('loginForm').addEventListener('submit', async function (event) {
+      event.preventDefault();
+      const r = await handleSubmit(event);
+      if (r.success == false) {
+        alertShow(r.message);
+      } else {
+        alertOff();
+        window.location.href = "index.html/";
+        let c = document.getElementById('remember_me').checked;
+        if (c) {
+          localStorage.setItem("user_id", r.toString());
+        } else {
+          sessionStorage.setItem("user_id", r.toString());
+        }
+      }
+
+    });
+
+    function alertShow(message) {
+      var alert = document.getElementById('alert');
+      alert.innerHTML = message;
+      alert.classList.remove("d-none");
+    }
+
+    function alertOff() {
+      var alert = document.getElementById('alert');
+      alert.classList.add('d-none');
+    }
+  </script>
+
+</body>
+
+</html>
