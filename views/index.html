@@ -26,26 +26,35 @@
         <div class="d-flex flex-row justify-content-evenly align-items-center nb">
             <a id="home" href="#"><i class="bi bi-house-door-fill"></i></a>
             <a id="collection" href="#"><i class="bi bi-collection"></i></a>
-            <a data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample" id="list" href="#"><i class="bi bi-list"></i></a>
+            <a data-bs-toggle="offcanvas" href="#offcanvasExample" role="button" aria-controls="offcanvasExample"
+                id="list" href="#"><i class="bi bi-list"></i></a>
         </div>
     </footer>
 
-    <div class="offcanvas offcanvas-end rounded" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel" style="height: 80vh; top: 5rem; max-width: 35vh;">
-        <div class="offcanvas-header">
-          <h5 class="offcanvas-title" id="offcanvasExampleLabel">Offcanvas</h5>
-          <!-- <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button> -->
+    <div class="offcanvas offcanvas-end rounded px-2" tabindex="-1" id="offcanvasExample"
+        aria-labelledby="offcanvasExampleLabel" style="height: 80vh; top: 5rem; max-width: 35vh;">
+        <div class="offcanvas-header justify-content-center mt-2 w-100">
+            <h5 class="offcanvas-title" id="offcanvasExampleLabel">
+                <a href="#">
+                    <!--<div style="width: 100px; height: 100px; background-color: black; border-radius: 50%;"></div>-->
+                    <div class="d-flex justify-content-center"><i class="bi bi-person-circle"
+                            style="font-size: 5rem;"></i></div>
+                    <span id="offcanvas_username">Nome utente</span>
+                </a>
+            </h5>
+            <!-- <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button> -->
         </div>
         <div class="offcanvas-body d-flex flex-column">
-          <a href="#"><i class="bi bi-bag"></i> Negozio</a>
-          <a href="#"><i class="bi bi-backpack2"></i> Oggetti</a>
-          <hr>
-          <a href="#">Novitá</a>
-          <a href="#">Regali</a>
-          <a href="#">Info</a>
-          <a href="#">Settings</a>
-          <hr>
+            <a href="#"><i class="bi bi-bag"></i> Negozio</a>
+            <a href="#"><i class="bi bi-backpack2"></i> Oggetti</a>
+            <hr>
+            <a href="#">Novitá</a>
+            <a href="#">Regali</a>
+            <a href="#">Info</a>
+            <a href="#">Settings</a>
+            <hr>
         </div>
-      </div>
+    </div>
 
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"

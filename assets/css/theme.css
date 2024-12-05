@@ -76,3 +76,7 @@ a:hover {
 .bi{
     font-size: 2.2rem;
 }
+
+.offcanvas a{
+    text-decoration: none;
+}
