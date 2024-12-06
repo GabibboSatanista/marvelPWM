@@ -133,9 +133,9 @@ a:hover {
 
 .oro {
     background: linear-gradient(135deg,
-            rgba(255, 223, 0, 0.7),
+            rgba(255, 223, 0, 0.8),
             /* Oro brillante */
-            rgba(255, 215, 0, 0.9),
+            rgba(255, 215, 0, 1),
             /* Un altro tono di oro chiaro */
             rgba(255, 184, 0, 0.8),
             rgba(255, 215, 0, 0.9),
@@ -160,13 +160,30 @@ a:hover {
         );
 }
 
-.emerald{
+.emerald {
     background: linear-gradient(135deg,
-    rgba(46, 139, 87, 0.7),   /* Verde smeraldo brillante (leggermente trasparente) */
-    rgba(0, 128, 0, 0.9),     /* Verde smeraldo scuro (più intenso e opaco) */
-    rgba(60, 179, 113, 0.8),  /* Verde smeraldo medio (con leggera trasparenza) */
-    rgba(46, 139, 87, 0.7),   /* Verde smeraldo brillante (trasparente) */
-    rgba(0, 128, 0, 0.9),     /* Verde smeraldo scuro */
-    rgba(60, 179, 113, 0.8)   /* Verde smeraldo medio */
-);
+            rgba(46, 139, 87, 0.7),
+            /* Verde smeraldo brillante (leggermente trasparente) */
+            rgba(0, 128, 0, 0.9),
+            /* Verde smeraldo scuro (più intenso e opaco) */
+            rgba(60, 179, 113, 0.8),
+            /* Verde smeraldo medio (con leggera trasparenza) */
+            rgba(46, 139, 87, 0.7),
+            /* Verde smeraldo brillante (trasparente) */
+            rgba(0, 128, 0, 0.9),
+            /* Verde smeraldo scuro */
+            rgba(60, 179, 113, 0.8)
+            /* Verde smeraldo medio */
+        );
+}
+
+.copper {
+    background: linear-gradient(135deg,
+            rgba(184, 115, 51, 0.8), /* Rame chiaro (trasparente) */
+            rgba(139, 69, 19, 0.9), /* Rame scuro (più intenso) */
+            rgba(218, 165, 32, 0.8), /* Ottone brillante */
+            rgba(184, 115, 51, 0.7), /* Rame chiaro */
+            rgba(139, 69, 19, 0.9), /* Rame scuro */
+            rgba(218, 165, 32, 0.8) /* Ottone brillante */
+        );
 }
