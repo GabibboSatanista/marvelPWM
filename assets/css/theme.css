@@ -7,26 +7,30 @@
 }
 
 hr {
-    position: relative; /* Necessario per posizionare l'ombra */
-    height: 0; /* Imposta l'altezza a 0 per non mostrare la linea */
-    margin: 30px 0; /* Aggiungi margine per distanziare gli elementi */
-    background: transparent; /* Assicurati che non ci sia un colore di sfondo */
+    position: relative;
+    /* Necessario per posizionare l'ombra */
+    height: 0;
+    /* Imposta l'altezza a 0 per non mostrare la linea */
+    margin: 30px 0;
+    /* Aggiungi margine per distanziare gli elementi */
 }
 
 
 body {
     background-color: var(--bg-color);
     color: var(--t-color);
+    font-family: 'Bangers', sans-serif;
 }
 
-header, main{
+header,
+main {
     background-color: var(--bg-color-secondary);
 }
 
 footer {
-    z-index: 1030; 
+    z-index: 1030;
     background-color: #1f1e1e;
-    box-shadow: 0 -4px 6px #1f1e1e;  
+    box-shadow: 0 -4px 6px #1f1e1e;
 }
 
 .nb a {
@@ -73,10 +77,96 @@ a:hover {
     box-shadow: 0 0 12px var(--secondary-color);
 }
 
-.bi{
+.bi {
     font-size: 2.2rem;
 }
 
-.offcanvas a{
+.offcanvas a {
     text-decoration: none;
+    color: var(--bg-color);
+}
+
+
+.offcanvas a:active,
+.offcanvas a:focus,
+.offcanvas a:hover {
+    text-decoration: none;
+    color: var(--bg-color-secondary);
+}
+
+.my-container {
+    border-radius: 15% 5% 15% 5%;
+    /* Arrotonda i due angoli opposti */
+    background-color: var(--bg-color);
+    transition: transform 0.1s ease;
+}
+
+.d-flex.flex-row .my-container:hover,
+.d-flex.flex-row .my-container:active {
+    transform: scale(1.1);
+}
+
+.my-container-overlay {
+    position: relative;
+    z-index: 1;
+    height: 70%;
+    top: -89%;
+    clip-path: polygon(0% 0%,
+            /* Angolo superiore sinistro */
+            100% 0%,
+            /* Angolo superiore destro */
+            100% 40%,
+            /* Angolo destro più lungo */
+            0% 80%
+            /* Angolo inferiore sinistro */
+        );
+    border-radius: 15% 5% 15% 5%;
+    pointer-events: none;
+    margin: 0.5rem;
+}
+
+.my-container>.d-flex,
+.my-container>.row {
+    position: relative;
+    z-index: 2;
+}
+
+.oro {
+    background: linear-gradient(135deg,
+            rgba(255, 223, 0, 0.7),
+            /* Oro brillante */
+            rgba(255, 215, 0, 0.9),
+            /* Un altro tono di oro chiaro */
+            rgba(255, 184, 0, 0.8),
+            rgba(255, 215, 0, 0.9),
+            /* Oro più scuro, ma ancora brillante */
+            rgba(255, 223, 0, 0.7)
+            /* Oro brillante */
+        );
+}
+
+.argento {
+    background: linear-gradient(135deg,
+            rgba(192, 192, 192, 0.7),
+            /* Argento brillante */
+            rgba(211, 211, 211, 0.9),
+            /* Argento chiaro brillante */
+            rgba(169, 169, 169, 0.8),
+            /* Grigio scuro con trasparenza */
+            rgba(211, 211, 211, 0.9),
+            /* Argento chiaro brillante */
+            rgba(192, 192, 192, 0.7)
+            /* Argento brillante */
+        );
+}
+
+.emerald{
+    background: linear-gradient(135deg,
+    rgba(46, 139, 87, 0.7),   /* Verde smeraldo brillante (leggermente trasparente) */
+    rgba(0, 128, 0, 0.9),     /* Verde smeraldo scuro (più intenso e opaco) */
+    rgba(60, 179, 113, 0.8),  /* Verde smeraldo medio (con leggera trasparenza) */
+    rgba(46, 139, 87, 0.7),   /* Verde smeraldo brillante (trasparente) */
+    rgba(0, 128, 0, 0.9),     /* Verde smeraldo scuro */
+    rgba(60, 179, 113, 0.8)   /* Verde smeraldo medio */
+);
 }
