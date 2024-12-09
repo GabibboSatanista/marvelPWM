@@ -111,9 +111,9 @@
         window.location.href = "index.html/";
         let c = document.getElementById('remember_me').checked;
         if (c) {
-          localStorage.setItem("user_id", r.toString());
+          localStorage.setItem("user_id", r.id);
         } else {
-          sessionStorage.setItem("user_id", r.toString());
+          sessionStorage.setItem("user_id", r.id);
         }
       }
 

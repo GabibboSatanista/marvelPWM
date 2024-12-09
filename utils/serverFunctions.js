@@ -4,11 +4,19 @@ module.exports = {
     getUser: getUser,
     deleteUser: deleteUser,
     changePassword: changePassword,
-    changeUsername: changeUsername
+    changeUsername: changeUsername,
+    getCharacterById: getCharacterById
 }
 
+const { response } = require('express');
+const CryptoJS = require("crypto-js");
 const mdb = require('../mongodbClient.js');
 const client = mdb.startMongoDBConnection();
+
+require("dotenv").config();
+const baseUrlMarvel = process.env.baseUrlMarvel;
+const privateKey = process.env.privateKey;
+const publicKey = process.env.publicKey;
 
 function loginAuth(res, body) {
     email = body.email;
@@ -88,4 +96,31 @@ function changeUsername(res, id, newUsr) {
             return res.status(200).send(r.message);
         }
     });
+}
+
+function getCharacterById(res, characterId) {
+    const timestamp = Date.now();
+    const hash = CryptoJS.MD5(timestamp + privateKey + publicKey).toString(CryptoJS.enc.Hex);
+    const url = `https://gateway.marvel.com/v1/public/characters/${characterId}?ts=${timestamp}&apikey=${publicKey}&hash=${hash}`;
+    fetch(url)
+    .then(response => {
+        if(response.ok){ return response.json(); }
+        else{ throw new Error(`${response.status}`) }
+    })
+    .then(data => {
+        if (data.code === 200) {
+          const character = data.data.results[0];
+          const essentials = {
+            name: character.name,
+            description: character.description,
+            thumbnail: {
+              url: `${character.thumbnail.path}.${character.thumbnail.extension}`,
+            },
+          };
+          res.status(data.code).send(JSON.stringify(essentials));
+        } else {
+          res.status(data.code).send(JSON.stringify(data.message));
+        }
+    })
+    .catch();
 }

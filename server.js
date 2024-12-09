@@ -11,7 +11,7 @@ var cors = require('cors');
 
 // Configure dotenv package
 require("dotenv").config();
-const mongo_db_url = process.env.mongo_db_url;
+const baseUrlMarvel = process.env.baseUrlMarvel;
 const port = process.env.PORT || 8080;
 
 const app = express();
@@ -19,6 +19,7 @@ const app = express();
 app.use(express.json());
 app.use(express.static(__dirname + '/assets'));
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile));
+app.use(cors());
 
 app.set('view engine', 'ejs');
 
@@ -73,5 +74,13 @@ app.post("/user/changeUsername", function(req, res){
 })
 
 //----------------------------------------------------------------------------
+
+app.get("/characters/:characterId", function(req, res){
+    let id = req.params.characterId;
+    utils.getCharacterById(res, id);
+})
+
+//----------------------------------------------------------------------------
+
 app.listen(port);
 console.log('Server start at http://localhost:' + port);

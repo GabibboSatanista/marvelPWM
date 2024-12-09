@@ -52,14 +52,18 @@ async function closeClientConnection(client) {
 async function insertUserIntoDB(data, client) {
     require("dotenv").config();
     const dbName = process.env.db_name;
-    const collectionName = process.env.collection_users;
+    const collection_users = process.env.collection_users;
+    const collection_album = process.env.collection_album;
     try {
-        users = await connectingToTestServer(client, dbName, collectionName);
+        users = await connectingToTestServer(client, dbName, collection_users);
         if(await doesUsernameExist(users, data.username)) return { success: false, message: "Nome utente giá esistente." }
         if(await doesEmailExist(users, data.email)) return { success: false, message: "Email giá esistente." }
         
         data.password = encrypt(data.password);
-        return await users.insertOne(data);
+        data.collection = [];
+        let resp = await users.insertOne(data);
+        
+        return ;
     } catch (error) {
         console.log(error);
         return null;

@@ -46,6 +46,7 @@ footer {
 
 a {
     color: var(--primary-color);
+    cursor: pointer;
 }
 
 a:active,
@@ -186,4 +187,29 @@ a:hover {
             rgba(139, 69, 19, 0.9), /* Rame scuro */
             rgba(218, 165, 32, 0.8) /* Ottone brillante */
         );
+}
+
+.img-thumbnail{
+    width: 100px; 
+    height: 100px; 
+    border-radius: 50%;
+}
+
+.cover-img {
+    width: 100%; /* L'immagine si estende completamente in larghezza */
+    height: 100%; /* L'immagine si estende completamente in altezza */
+    object-fit: cover; /* Copre tutta l'area senza distorsioni */
+    object-position: center; /* Posiziona il contenuto centrato */
+}
+
+#collectionPage main .card{
+    width: 100px; 
+    height: 150px; 
+    overflow: hidden;
+    transition: transform 0.1s ease-in-out;
+    cursor: pointer;
+}
+
+#collectionPage main .card:hover, #collectionPage main .card:active{
+    transform: scale(1.1);
 }
