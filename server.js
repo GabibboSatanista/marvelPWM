@@ -80,6 +80,11 @@ app.get("/characters/:characterId", function(req, res){
     utils.getCharacterById(res, id);
 })
 
+app.post("/pack/open", function(req, res){
+    let id = req.body.id;
+    utils.openPack(res, id);
+})
+
 //----------------------------------------------------------------------------
 
 app.listen(port);

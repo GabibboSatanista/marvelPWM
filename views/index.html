@@ -14,8 +14,6 @@
 </head>
 
 <body style="background-color: #3a3838;">
-
-
     <!--MAIN PAGE-->
     <div id="mainPage">
         <header class="d-flex flex-wrap align-items-center justify-content-center py-3">
@@ -23,8 +21,8 @@
                     class="img-thumbnail"></div>
 
             <div class="input-group mx-3 w-25 ms-auto">
-                <input class="form-control text-end" type="text" value="10" style="font-family: 'Arial', sans-serif;"
-                    readonly disabled></input>
+                <input class="form-control text-end" id="number_credits" type="text" value="10"
+                    style="font-family: 'Arial', sans-serif;" readonly disabled></input>
                 <span class="input-group-text" id="basic-addon1"><i class="bi bi-coin"
                         style="font-size: 1.2rem; color: #ffd700"></i></span>
             </div>
@@ -36,15 +34,11 @@
 
                 <div class="my-container col-11 shadow" style="height: 300px;">
                     <div class="row mt-4 mx-4" style="height: 60%;">
-                        <div class="col card  mx-3">
-                            <img src="..." class="card-img" alt="...">
-                        </div>
-                        <div class="col card mx-3">
-                            <img src="..." class="card-img" alt="...">
-                        </div>
+                        <img src="../images/marvelPack.png" class="card-img" alt="...">
                     </div>
                     <div class="row mt-4 mx-4">
-                        <div class="col-12"><button class="btn btn-primary w-100">Apri</button></div>
+                        <div class="col-12"><button class="btn btn-primary w-100" id="openingPacketButton">Apri</button>
+                        </div>
                     </div>
                     <div class="my-container-overlay oro"></div>
                 </div>
@@ -113,23 +107,50 @@
                             <div class="position-absolute bottom-0 start-0 w-100"
                                 style="background-color: rgba(0,0,0, 0.8); height: 24%;"></div>
                             <h5 class="position-absolute bottom-0 start-0 card-title mx-2 w-100"></h5>
-                            <h5 class="position-absolute top-0 end-0 p-2 card-text" style="background-color: red; border: 1px solid black; font-size: 1rem;"></h5>
+                            <h5 class="position-absolute top-0 end-0 p-2 card-text"
+                                style="background-color: red; border: 1px solid black; font-size: 1rem;"></h5>
                         </div>
                     </div>
                 </div>
             </div>
         </main>
 
-        <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvas" aria-labelledby="offcanvasLabel" style="height: 90%;">
+        <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvas" aria-labelledby="offcanvasLabel"
+            style="height: 90%;">
             <img class="img-fluid">
             <div class="offcanvas-header">
-              <h1 class="offcanvas-title" id="offcanvasLabel">Offcanvas</h1>
-              <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                <h1 class="offcanvas-title" id="offcanvasLabel">Offcanvas</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div class="offcanvas-body">
-              Content for the offcanvas goes here. You can place just about any Bootstrap component or custom elements here.
+                Content for the offcanvas goes here. You can place just about any Bootstrap component or custom elements
+                here.
             </div>
         </div>
+    </div>
+
+    <!--Opening page-->
+    <div class="d-none" id="openingPage">
+        <header class="text-center shadow p-1 ">
+            <h1 class="my-4">Carte Ottenute</h1>
+        </header>
+        <main class="container mt-5">
+            <div class="row justify-content-center" id="card_collection">
+                <div class="col-4 col-md-4 col-lg-3 mb-3 d-none">
+                    <div class="card text-bg-dark">
+                        <img src="http://i.annihil.us/u/prod/marvel/i/mg/5/a0/538615ca33ab0.jpg"
+                            class="card-img img-fluid cover-img" alt="...">
+                        <div class="card-img-overlay h-100 w-100">
+                            <div class="position-absolute bottom-0 start-0 w-100"
+                                style="background-color: rgba(0,0,0, 0.8); height: 24%;"></div>
+                            <h5 class="position-absolute bottom-0 start-0 card-title mx-2 w-100"></h5>
+                            <h5 class="position-absolute top-0 end-0 p-2 card-text"
+                                style="background-color: red; border: 1px solid black; font-size: 1rem;"></h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
     </div>
 
     <footer class="fixed-bottom">

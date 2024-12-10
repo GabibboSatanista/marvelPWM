@@ -1,12 +1,13 @@
 const mainPage = document.getElementById('mainPage');
 const collectionPage = document.getElementById('collectionPage');
+const openingPage = document.getElementById('openingPage');
 
 loadUserData();
 
 async function loadUserData() {
     const offcanvas_username = document.getElementById('offcanvas_username');
     const img_thumbnail = document.getElementsByClassName('img-thumbnail');
-
+    const number_credits = document.getElementById('number_credits');
     const id_user = getUserId();
     if (id_user === null) {
         console.error('Utente non loggato');
@@ -17,6 +18,7 @@ async function loadUserData() {
     console.log(userData);
 
     offcanvas_username.innerText = userData.username;
+    number_credits.value = userData.credits
     img = await getImageMarvelById(userData.favourite_superhero);
     Array.from(img_thumbnail).forEach(thumb => {
         thumb.src = img;
@@ -56,6 +58,7 @@ function pageActivator(page, callFunction) {
     if (page === 'collection') {
         collectionPage.classList.remove('d-none');
         mainPage.classList.add('d-none');
+        openingPage.classList.add('d-none');
         const fakeEvent = { currentTarget: { id: page } };
         updateIcons(fakeEvent)
         if (callFunction) { loadCollectionPage() }
@@ -70,8 +73,12 @@ function pageActivator(page, callFunction) {
         mainPage.classList.add('d-none');
         collectionPage.classList.add('d-none');
 
-        if (callFunction) { loadShopPage() }
-    } else {
+        
+    } else if(page === 'opening'){
+        openingPage.classList.remove('d-none');
+        collectionPage.classList.add('d-none');
+        mainPage.classList.add('d-none');
+    }else {
         mainPage.classList.remove('d-none');
         collectionPage.classList.add('d-none');
         const fakeEvent = { currentTarget: { id: page } };
@@ -155,10 +162,6 @@ async function loadCollectionPage() {
     });
 }
 
-async function loadCartaDettagli(id) {
-
-}
-
 /*
 const tradesDiv = document.getElementById('tradesDiv');
 const shopDiv = document.getElementById('shopDiv');
@@ -182,4 +185,25 @@ async function getImageMarvelById(id) {
 async function getDataMarvelById(id) {
     let r = await fetch('http://localhost:8080/characters/' + id).then(resp => resp.json()).then(data => { return data; });
     return r;
+}
+
+document.getElementById('openingPacketButton').addEventListener('click', async function(event){
+    event.preventDefault();
+    console.log('OK');
+    await openPack();
+})
+
+async function openPack(){
+    pageActivator('opening', false);
+    history.pushState('opening', '', '#opening');
+    user_id = getUserId();
+    fetch('http://localhost:8080/pack/open', {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: user_id}),
+        redirect: "follow"
+    }).then(response => response.json())
+    .then(data =>{ 
+        console.log(data);
+    })
 }

@@ -8,7 +8,8 @@ module.exports = {
     deleteUserById: deleteUserById,
     getUserFromDB: getUserFromDB,
     changePassword: changePassword,
-    changeUsername: changeUsername
+    changeUsername: changeUsername,
+    removeCredits: removeCredits
 }
 
 //SISTEMARE
@@ -61,6 +62,7 @@ async function insertUserIntoDB(data, client) {
         
         data.password = encrypt(data.password);
         data.collection = [];
+        data.credits = '0';
         let resp = await users.insertOne(data);
         
         return ;
@@ -190,6 +192,46 @@ async function changeUsername(id, newUsr, client) {
     } catch (error) {
         console.log(error);
         return { success: false, message: "Errore durante l'aggiornamento della username." };
+    } finally {
+        await closeClientConnection(client);
+    }
+}
+
+async function removeCredits(id, credits_to_remove, client){
+    require("dotenv").config();changeUsername
+    const dbName = process.env.db_name;
+    const collectionName = process.env.collection_users;
+    const { ObjectId } = require('mongodb');
+    try {
+        collection = await connectingToTestServer(client, dbName, collectionName);
+        const objectId = new ObjectId(id);
+        console.log(id);
+        const usr = await collection.findOne({ _id: objectId });
+        
+        // Se l'utente non esiste, restituisci un errore
+        if (!usr) {
+            return { success: false, message: "Utente non trovato." };
+        }
+        
+        // Verifica che il campo credits esista e sia un numero
+        const credits = usr.credits;
+        if (credits === undefined || credits === null) {
+            return { success: false, message: "I crediti dell'utente non sono stati trovati." };
+        }
+
+        const result = await collection.updateOne(
+            { _id: objectId },
+            { $set: { credits: credits - credits_to_remove } }
+        );
+
+        if (result.modifiedCount === 1) {
+            return { success: true, message: "Aggiornamento crediti riuscito" };
+        } else {
+            return { success: false, message: "Errore durante l'aggiornamento crediti." };
+        }
+    } catch (error) {
+        console.log(error);
+        return { success: false, message: "Errore durante l'aggiornamento crediti." };
     } finally {
         await closeClientConnection(client);
     }

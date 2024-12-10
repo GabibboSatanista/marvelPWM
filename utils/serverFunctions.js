@@ -5,7 +5,8 @@ module.exports = {
     deleteUser: deleteUser,
     changePassword: changePassword,
     changeUsername: changeUsername,
-    getCharacterById: getCharacterById
+    getCharacterById: getCharacterById,
+    openPack: openPack
 }
 
 const { response } = require('express');
@@ -103,24 +104,80 @@ function getCharacterById(res, characterId) {
     const hash = CryptoJS.MD5(timestamp + privateKey + publicKey).toString(CryptoJS.enc.Hex);
     const url = `https://gateway.marvel.com/v1/public/characters/${characterId}?ts=${timestamp}&apikey=${publicKey}&hash=${hash}`;
     fetch(url)
-    .then(response => {
-        if(response.ok){ return response.json(); }
-        else{ throw new Error(`${response.status}`) }
-    })
-    .then(data => {
-        if (data.code === 200) {
-          const character = data.data.results[0];
-          const essentials = {
-            name: character.name,
-            description: character.description,
-            thumbnail: {
-              url: `${character.thumbnail.path}.${character.thumbnail.extension}`,
-            },
-          };
-          res.status(data.code).send(JSON.stringify(essentials));
-        } else {
-          res.status(data.code).send(JSON.stringify(data.message));
-        }
-    })
-    .catch();
+        .then(response => {
+            if (response.ok) { return response.json(); }
+            else { throw new Error(`${response.status}`) }
+        })
+        .then(data => {
+            if (data.code === 200) {
+                const character = data.data.results[0];
+                const essentials = {
+                    name: character.name,
+                    description: character.description,
+                    thumbnail: {
+                        url: `${character.thumbnail.path}.${character.thumbnail.extension}`,
+                    },
+                };
+                res.status(data.code).send(JSON.stringify(essentials));
+            } else {
+                res.status(data.code).send(JSON.stringify(data.message));
+            }
+        })
+        .catch();
 }
+
+async function openPack(res, userId) {
+    try {
+        let out = [];
+        let data_out;
+        for(let i = 0; i < 5; i++){
+            const timestamp = Date.now();
+            const hash = CryptoJS.MD5(timestamp + privateKey + publicKey).toString(CryptoJS.enc.Hex);
+    
+            const baseURL = "https://gateway.marvel.com/v1/public/characters";
+            const limit = 1; // Numero di eroi da ottenere
+            const totalAvailable = 1500; // Numero massimo stimato di personaggi
+            const randomOffset = Math.floor(Math.random() * totalAvailable);
+    
+            const url = `${baseURL}?limit=${limit}&offset=${randomOffset}&apikey=${publicKey}&ts=${timestamp}&hash=${hash}`;
+            const response = await fetch(url);
+            if (!response.ok) {
+                data_out = data;
+                break;
+            }
+            const data = await response.json();
+            const character = data.data.results[0];
+            let essentials = {
+                name: character.name,
+                description: character.description,
+                thumbnail: {
+                    url: `${character.thumbnail.path}.${character.thumbnail.extension}`,
+                },
+            };
+            data_out = data;
+            out.push(essentials);
+        }
+        
+        if (data_out.code === 200) {
+            
+            const r = await mdb.removeCredits(userId, 1, client);
+            console.log(r);
+            if (r.success == false) {
+                res.status(404).send(r.message);
+                return;
+            } else {
+                
+                res.status(200).send(out);
+                return;
+            }
+        } else {
+            console.error("Errore API Marvel:", data_out);
+            res.status(data_out.code).send('Marvel Error');
+            return;
+        }
+    } catch (error) {
+        console.error("Errore durante la richiesta:", error);
+        res.status(500).send('Internal error');
+    }
+}
+
