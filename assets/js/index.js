@@ -15,7 +15,6 @@ async function loadUserData() {
     }
 
     const userData = await getUserProfile(id_user);
-    console.log(userData);
 
     offcanvas_username.innerText = userData.username;
     number_credits.value = userData.credits
@@ -73,14 +72,15 @@ function pageActivator(page, callFunction) {
         mainPage.classList.add('d-none');
         collectionPage.classList.add('d-none');
 
-        
-    } else if(page === 'opening'){
+
+    } else if (page === 'opening') {
         openingPage.classList.remove('d-none');
         collectionPage.classList.add('d-none');
         mainPage.classList.add('d-none');
-    }else {
+    } else {
         mainPage.classList.remove('d-none');
         collectionPage.classList.add('d-none');
+        openingPage.classList.add('d-none');
         const fakeEvent = { currentTarget: { id: page } };
         updateIcons(fakeEvent)
         if (callFunction) { loadMainPage() }
@@ -128,15 +128,18 @@ async function loadMainPage() {
 
 async function loadCollectionPage() {
     let card_collection = document.getElementById('card_collection');
+    card_collection.classList.add('d-none');
+    while (card_collection.childElementCount > 1) {
+        card_collection.removeChild(card_collection.lastChild);
+    }
+    let toClone = card_collection.firstElementChild;
     pageActivator('collection', false);
     history.pushState('collection', '', '#collection');
-    let toClone = card_collection.firstElementChild;
     userData = await getUserProfile(getUserId());
     const offcanvas = document.getElementById('offcanvas');
-    userData.collection.forEach(async el => {
-        if (document.getElementById(el.id)) {
-            return;
-        }
+    activateSpinner(collectionPage);
+    // Creazione di un array di promesse
+    const promises = userData.collection.map(async el => {
         let clone = toClone.cloneNode(true);
         clone.id = el.id;
         let data = await getDataMarvelById(el.id);
@@ -144,7 +147,7 @@ async function loadCollectionPage() {
         clone.getElementsByClassName('card-title')[0].innerText = data.name;
         clone.getElementsByClassName('card-text')[0].innerText = el.count;
         clone.classList.remove('d-none');
-        clone.addEventListener('click', async function(event){
+        clone.addEventListener('click', async function (event) {
             event.preventDefault();
             let ct = event.currentTarget;
             const offcanvasInstance = new bootstrap.Offcanvas(offcanvas);
@@ -155,11 +158,17 @@ async function loadCollectionPage() {
             title.innerText = data.name;
             let body = offcanvas.getElementsByClassName('offcanvas-body')[0];
             body.innerText = data.description;
-            
-            offcanvasInstance.show();  
-        })
+
+            offcanvasInstance.show();
+        });
         toClone.after(clone);
     });
+
+    // Attendi il completamento di tutte le promesse
+    await Promise.all(promises);
+    deactivateSpinner(collectionPage);
+    // Rimuovi la classe 'd-none' dopo che tutto è completato
+    card_collection.classList.remove('d-none');
 }
 
 /*
@@ -187,36 +196,54 @@ async function getDataMarvelById(id) {
     return r;
 }
 
-document.getElementById('openingPacketButton').addEventListener('click', async function(event){
+document.getElementById('openingPacketButton').addEventListener('click', async function (event) {
     event.preventDefault();
-    console.log('OK');
     await openPack();
 })
 
-async function openPack(){
+async function openPack() {
+    user_id = getUserId();
+    activateSpinner(openingPage);
     pageActivator('opening', false);
     history.pushState('opening', '', '#opening');
-    user_id = getUserId();
+    const packCards = document.getElementById('packCards');
+    packCards.classList.add('d-none');
+    while (packCards.childElementCount > 1) {
+        packCards.removeChild(packCards.lastChild);
+    }
     fetch('http://localhost:8080/pack/open', {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: user_id}),
+        body: JSON.stringify({ id: user_id }),
         redirect: "follow"
     }).then(response => response.json())
-    .then(data =>{ 
-        const packCards = document.getElementById('packCards');
-        let toClone = packCards.firstElementChild;
-        const offcanvas = document.getElementById('offcanvas');
-        data.forEach(el =>{
-            let clone = toClone.cloneNode(true);
-            clone.id = el.id;
-            clone.getElementsByClassName('card-img')[0].src = el.thumbnail.url;
-            clone.getElementsByClassName('card-title')[0].innerText = el.name;
-            clone.getElementsByClassName('card-text')[0].innerText = 1;
-            clone.classList.remove('d-none');
-            toClone.after(clone);
-        }).catch(error => {
-            console.log(error);
-        })
-    })
+        .then(async data => {
+            let toClone = packCards.firstElementChild;
+            const offcanvas = document.getElementById('offcanvas');
+            let i = 1;
+            const promises = data.map(el => {
+                let clone = toClone.cloneNode(true);
+                clone.id = el.id;
+                clone.getElementsByClassName('card-img')[0].src = el.thumbnail.url;
+                clone.getElementsByClassName('card-title')[0].innerText = el.name;
+                clone.getElementsByClassName('card-text')[0].innerText = 1;
+                clone.classList.remove('d-none');
+                toClone.after(clone);
+                i++;
+            })
+            await Promise.all(promises);
+            deactivateSpinner(openingPage);
+            packCards.classList.remove('d-none');
+
+        });
+}
+
+function activateSpinner(doc) {
+    let spinner = doc.getElementsByClassName('spinner-border')[0];
+    spinner.classList.remove('d-none');
+}
+
+function deactivateSpinner(doc) {
+    let spinner = doc.getElementsByClassName('spinner-border')[0];
+    spinner.classList.add('d-none');
 }

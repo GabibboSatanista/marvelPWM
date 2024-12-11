@@ -100,6 +100,11 @@ a:hover {
     /* Arrotonda i due angoli opposti */
     background-color: var(--bg-color);
     transition: transform 0.1s ease;
+    
+}
+
+.d-flex.flex-row .my-container{
+    cursor: pointer;
 }
 
 .d-flex.flex-row .my-container:hover,
@@ -111,7 +116,7 @@ a:hover {
     position: relative;
     z-index: 1;
     height: 70%;
-    top: -89%;
+    top: -90%;
     clip-path: polygon(0% 0%,
             /* Angolo superiore sinistro */
             100% 0%,
@@ -121,7 +126,7 @@ a:hover {
             0% 80%
             /* Angolo inferiore sinistro */
         );
-    border-radius: 15% 5% 15% 5%;
+    border-radius: 15% 5% 15% 10%;
     pointer-events: none;
     margin: 0.5rem;
 }

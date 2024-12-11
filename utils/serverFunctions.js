@@ -148,6 +148,7 @@ async function openPack(res, userId) {
             const data = await response.json();
             const character = data.data.results[0];
             let essentials = {
+                id: character.id.toString(),
                 name: character.name,
                 description: character.description,
                 thumbnail: {
@@ -161,13 +162,13 @@ async function openPack(res, userId) {
         if (data_out.code === 200) {
             
             const r = await mdb.removeCredits(userId, 1, client);
-            console.log(r);
             if (r.success == false) {
                 res.status(404).send(r.message);
                 return;
             } else {
-                
-                res.status(200).send(out);
+                const rAdding = await mdb.addCardsToUser(userId, out, client);
+                if(rAdding.success == false){ res.status(404).send(rAdding.message); return;}
+                else{ res.status(200).send(out); return;}
                 return;
             }
         } else {

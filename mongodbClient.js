@@ -9,7 +9,8 @@ module.exports = {
     getUserFromDB: getUserFromDB,
     changePassword: changePassword,
     changeUsername: changeUsername,
-    removeCredits: removeCredits
+    removeCredits: removeCredits,
+    addCardsToUser: addCardsToUser
 }
 
 //SISTEMARE
@@ -57,15 +58,15 @@ async function insertUserIntoDB(data, client) {
     const collection_album = process.env.collection_album;
     try {
         users = await connectingToTestServer(client, dbName, collection_users);
-        if(await doesUsernameExist(users, data.username)) return { success: false, message: "Nome utente giá esistente." }
-        if(await doesEmailExist(users, data.email)) return { success: false, message: "Email giá esistente." }
-        
+        if (await doesUsernameExist(users, data.username)) return { success: false, message: "Nome utente giá esistente." }
+        if (await doesEmailExist(users, data.email)) return { success: false, message: "Email giá esistente." }
+
         data.password = encrypt(data.password);
         data.collection = [];
         data.credits = '0';
         let resp = await users.insertOne(data);
-        
-        return ;
+
+        return;
     } catch (error) {
         console.log(error);
         return null;
@@ -161,16 +162,16 @@ async function changePassword(id, newPsw, client) {
 
 
 async function changeUsername(id, newUsr, client) {
-    require("dotenv").config();changeUsername
+    require("dotenv").config(); changeUsername
     const dbName = process.env.db_name;
     const collectionName = process.env.collection_users;
     const { ObjectId } = require('mongodb');
     try {
         collection = await connectingToTestServer(client, dbName, collectionName);
-        
+
         //check username giá esistente
-        if(await doesUsernameExist(collection, newUsr)) return { success: false, message: "Nome utente giá esistente." }
-        
+        if (await doesUsernameExist(collection, newUsr)) return { success: false, message: "Nome utente giá esistente." }
+
         const objectId = new ObjectId(id);
         // Trova l'utente nel database
         const user = await collection.findOne({ _id: objectId });
@@ -197,8 +198,8 @@ async function changeUsername(id, newUsr, client) {
     }
 }
 
-async function removeCredits(id, credits_to_remove, client){
-    require("dotenv").config();changeUsername
+async function removeCredits(id, credits_to_remove, client) {
+    require("dotenv").config(); changeUsername
     const dbName = process.env.db_name;
     const collectionName = process.env.collection_users;
     const { ObjectId } = require('mongodb');
@@ -207,12 +208,12 @@ async function removeCredits(id, credits_to_remove, client){
         const objectId = new ObjectId(id);
         console.log(id);
         const usr = await collection.findOne({ _id: objectId });
-        
+
         // Se l'utente non esiste, restituisci un errore
         if (!usr) {
             return { success: false, message: "Utente non trovato." };
         }
-        
+
         // Verifica che il campo credits esista e sia un numero
         const credits = usr.credits;
         if (credits === undefined || credits === null) {
@@ -237,6 +238,50 @@ async function removeCredits(id, credits_to_remove, client){
     }
 }
 
+async function addCardsToUser(userId, newCards, client) {
+    require("dotenv").config(); changeUsername
+    const dbName = process.env.db_name;
+    const collectionName = process.env.collection_users;
+    const { ObjectId } = require('mongodb');
+    try {
+        collection = await connectingToTestServer(client, dbName, collectionName);
+        const objectId = new ObjectId(userId);
+        const usr = await collection.findOne({ _id: objectId });
+
+        // Se l'utente non esiste, restituisci un errore
+        if (!usr) { return { success: false, message: "Utente non trovato." }; }
+
+        const cards = usr.collection;
+
+        newCards.forEach(el => {
+            let id = el.id;
+            let card = cards.find(card => card.id === id);
+            if (card) {
+                // Incrementa il valore di count di 1
+                card.count = (parseInt(card.count) + 1).toString();
+            }else{
+                cards.push({id: id, count: "1"})
+            }
+        });
+
+
+        const result = await collection.updateOne(
+            { _id: objectId },
+            { $set: { collection: cards } }
+        );
+
+        if (result.modifiedCount === 1) {
+            return { success: true, message: "Aggiornamento carte collezione riuscito" };
+        } else {
+            return { success: false, message: "Errore durante l'aggiornamento delle carte." };
+        }
+    } catch (error) {
+        console.log(error);
+        return { success: false, message: error };
+    } finally {
+        await closeClientConnection(client);
+    }
+}
 
 async function doesUsernameExist(collection, username) {
     try {
