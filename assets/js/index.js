@@ -61,7 +61,7 @@ function pageActivator(page, callFunction) {
         openingPage.classList.add('d-none');
         const fakeEvent = { currentTarget: { id: page } };
         updateIcons(fakeEvent)
-        if (callFunction) { loadCollectionPage() }
+        //if (callFunction) { loadCollectionPage() }
     } else if (page === 'trades') {
 
         mainPage.classList.add('d-none');
@@ -204,6 +204,19 @@ async function openPack(){
         redirect: "follow"
     }).then(response => response.json())
     .then(data =>{ 
-        console.log(data);
+        const packCards = document.getElementById('packCards');
+        let toClone = packCards.firstElementChild;
+        const offcanvas = document.getElementById('offcanvas');
+        data.forEach(el =>{
+            let clone = toClone.cloneNode(true);
+            clone.id = el.id;
+            clone.getElementsByClassName('card-img')[0].src = el.thumbnail.url;
+            clone.getElementsByClassName('card-title')[0].innerText = el.name;
+            clone.getElementsByClassName('card-text')[0].innerText = 1;
+            clone.classList.remove('d-none');
+            toClone.after(clone);
+        }).catch(error => {
+            console.log(error);
+        })
     })
 }
