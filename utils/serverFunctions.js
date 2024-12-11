@@ -6,7 +6,8 @@ module.exports = {
     changePassword: changePassword,
     changeUsername: changeUsername,
     getCharacterById: getCharacterById,
-    openPack: openPack
+    openPack: openPack,
+    addCredits: addCredits
 }
 
 const { response } = require('express');
@@ -130,15 +131,15 @@ async function openPack(res, userId) {
     try {
         let out = [];
         let data_out;
-        for(let i = 0; i < 5; i++){
+        for (let i = 0; i < 5; i++) {
             const timestamp = Date.now();
             const hash = CryptoJS.MD5(timestamp + privateKey + publicKey).toString(CryptoJS.enc.Hex);
-    
+
             const baseURL = "https://gateway.marvel.com/v1/public/characters";
             const limit = 1; // Numero di eroi da ottenere
             const totalAvailable = 1500; // Numero massimo stimato di personaggi
             const randomOffset = Math.floor(Math.random() * totalAvailable);
-    
+
             const url = `${baseURL}?limit=${limit}&offset=${randomOffset}&apikey=${publicKey}&ts=${timestamp}&hash=${hash}`;
             const response = await fetch(url);
             if (!response.ok) {
@@ -158,23 +159,38 @@ async function openPack(res, userId) {
             data_out = data;
             out.push(essentials);
         }
-        
+
         if (data_out.code === 200) {
-            
+
             const r = await mdb.removeCredits(userId, 1, client);
             if (r.success == false) {
                 res.status(404).send(r.message);
                 return;
             } else {
                 const rAdding = await mdb.addCardsToUser(userId, out, client);
-                if(rAdding.success == false){ res.status(404).send(rAdding.message); return;}
-                else{ res.status(200).send(out); return;}
+                if (rAdding.success == false) { res.status(404).send(rAdding.message); return; }
+                else { res.status(200).send(out); return; }
                 return;
             }
         } else {
             console.error("Errore API Marvel:", data_out);
             res.status(data_out.code).send('Marvel Error');
             return;
+        }
+    } catch (error) {
+        console.error("Errore durante la richiesta:", error);
+        res.status(500).send('Internal error');
+    }
+}
+
+async function addCredits(res, numberOfCredits,userId) {
+    try {
+        const r = await mdb.addCredits(userId, numberOfCredits, client);
+        if (r.success == false) {
+            res.status(404).send(r.message);
+            return;
+        } else {
+            res.status(200);
         }
     } catch (error) {
         console.error("Errore durante la richiesta:", error);

@@ -40,6 +40,14 @@ app.get('/signin.html', (req, res) => {
     res.sendFile(path.join(__dirname, '/views/signin.html'));
 });
 
+app.get('/profile.html', (req, res) => {
+    res.sendFile(path.join(__dirname, '/views/profile.html'));
+});
+
+app.get('/shop.html', (req, res) => {
+    res.sendFile(path.join(__dirname, '/views/shop.html'));
+});
+
 //----------------------------------------------------------------------------
 app.post("/login", (req, res) => {
     utils.loginAuth(res, req.body);
@@ -83,6 +91,11 @@ app.get("/characters/:characterId", function(req, res){
 app.post("/pack/open", function(req, res){
     let id = req.body.id;
     utils.openPack(res, id);
+})
+
+app.post("/credits/add/4", function(req, res){
+    let id = req.body.id;
+    utils.addCredits(res, 4,id);
 })
 
 //----------------------------------------------------------------------------

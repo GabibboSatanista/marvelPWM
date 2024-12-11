@@ -112,6 +112,11 @@ a:hover {
     transform: scale(1.1);
 }
 
+#mainShop .my-container:hover,
+#mainShop .my-container:active {
+    transform: scale(1.1);
+}
+
 .my-container-overlay {
     position: relative;
     z-index: 1;

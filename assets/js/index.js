@@ -5,6 +5,8 @@ const openingPage = document.getElementById('openingPage');
 loadUserData();
 
 async function loadUserData() {
+    mainPage.classList.add('d-none');
+    activateSpinner(mainPage);
     const offcanvas_username = document.getElementById('offcanvas_username');
     const img_thumbnail = document.getElementsByClassName('img-thumbnail');
     const number_credits = document.getElementById('number_credits');
@@ -22,6 +24,8 @@ async function loadUserData() {
     Array.from(img_thumbnail).forEach(thumb => {
         thumb.src = img;
     })
+    deactivateSpinner(mainPage);
+    mainPage.classList.remove('d-none');
     return userData;
 }
 
@@ -171,20 +175,6 @@ async function loadCollectionPage() {
     card_collection.classList.remove('d-none');
 }
 
-/*
-const tradesDiv = document.getElementById('tradesDiv');
-const shopDiv = document.getElementById('shopDiv');
-
-tradesDiv.addEventListener('click', function(event){
-    event.preventDefault();
-    loadTradesPage(); WINDOW.LOCATION etc....
-});
-
-shopDiv.addEventListener('click', function(event){
-    event.preventDefault();
-    loadShopPage();
-});
-*/
 
 async function getImageMarvelById(id) {
     let r = await fetch('http://localhost:8080/characters/' + id).then(resp => resp.json()).then(data => { return data.thumbnail.url; });
@@ -232,11 +222,31 @@ async function openPack() {
                 i++;
             })
             await Promise.all(promises);
+
+            const number_credits = document.getElementById('number_credits');
+            number_credits.value = number_credits.value - 1;
             deactivateSpinner(openingPage);
             packCards.classList.remove('d-none');
 
         });
 }
+
+document.addEventListener('DOMContentLoaded', function () {
+    const shopDiv = document.getElementById('shopDiv');
+
+    if (shopDiv) {
+        shopDiv.addEventListener('click', function () {
+            window.location.href = '/shop.html';
+        });
+    }
+
+    const mainProfileImage = document.getElementById('mainProfileImage');
+    if (mainProfileImage) {
+        mainProfileImage.addEventListener('click', function () {
+            window.location.href = '/profile.html';
+        });
+    }
+});
 
 function activateSpinner(doc) {
     let spinner = doc.getElementsByClassName('spinner-border')[0];

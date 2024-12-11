@@ -18,11 +18,11 @@
     <!--MAIN PAGE-->
     <div id="mainPage">
         <header class="d-flex flex-wrap align-items-center justify-content-center py-3">
-            <div class="d-flex justify-content-center position-relative start-50 translate-middle-x"><img
+            <div class="d-flex justify-content-center position-relative start-50 translate-middle-x" id="mainProfileImage"><img
                     class="img-thumbnail"></div>
 
             <div class="input-group mx-3 w-25 ms-auto">
-                <input class="form-control text-end" id="number_credits" type="text" value="10"
+                <input class="form-control text-end" id="number_credits" type="text" value=""
                     style="font-family: 'Arial', sans-serif;" readonly disabled></input>
                 <span class="input-group-text" id="basic-addon1"><i class="bi bi-coin"
                         style="font-size: 1.2rem; color: #ffd700"></i></span>
@@ -99,10 +99,10 @@
 
     <!--Collection page-->
     <div class="d-none" id="collectionPage">
-        <header class="text-center shadow p-1 ">
+        <header class="text-center shadow p-1">
             <h1 class="my-4">Collezione</h1>
         </header>
-        <main class="container mt-5 mb-5">
+        <main class="container mt-3 mb-5">
             <div class="spinner-border d-none position-absolute top-50 start-50" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
@@ -179,7 +179,7 @@
         aria-labelledby="offcanvasOptionsLabel" style="height: 80vh; top: 5rem; max-width: 35vh;">
         <div class="offcanvas-header justify-content-center mt-2 w-100">
             <h5 class="offcanvas-title justify-content-center text-center" id="offcanvasOptionsLabel">
-                <a href="#">
+                <a onclick="window.location.href='profile.html';">
                     <!--<div style="width: 100px; height: 100px; background-color: black; border-radius: 50%;"></div>-->
                     <div class="d-flex"><img class="img-thumbnail"></div>
                     <p class="mt-1" id="offcanvas_username"></p>
@@ -188,7 +188,7 @@
             <!-- <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button> -->
         </div>
         <div class="offcanvas-body d-flex flex-column">
-            <a onclick="loadCollectionPage()"><i class="bi bi-bag" style="font-size: 1.8rem;"></i> <span class="mx-2"
+            <a onclick="window.location.href='/shop.html'"><i class="bi bi-bag" style="font-size: 1.8rem;"></i> <span class="mx-2"
                     style="font-size: 1.15rem;">Negozio</span></a>
             <a href="#"><i class="bi bi-backpack2" style="font-size: 1.8rem;"></i> <span class="mx-2"
                     style="font-size: 1.15rem;">Oggetti</span></a>
