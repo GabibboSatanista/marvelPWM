@@ -27,7 +27,8 @@
             </div>
 
             <div class="form-floating mb-3 col-12 col-md-6">
-              <input type="email" class="form-control rounded" id="emailCheck" name="emailCheck" placeholder="" required>
+              <input type="email" class="form-control rounded" id="emailCheck" name="emailCheck" placeholder=""
+                required>
               <label for="emailCheck">Conferma Email</label>
             </div>
 
@@ -39,8 +40,8 @@
             </div>
 
             <div class="form-floating mb-3 col-12 col-md-6">
-              <input type="password" class="form-control rounded" id="passwordCheck" name="passwordCheck"
-                placeholder="" required>
+              <input type="password" class="form-control rounded" id="passwordCheck" name="passwordCheck" placeholder=""
+                required>
               <label for="passwordCheck">Conferma Password</label>
             </div>
           </div>
@@ -51,8 +52,13 @@
           </div>
 
           <div class="form-floating mb-3">
-            <input type="text" class="form-control rounded" id="fs" name="fs" placeholder="" required>
-            <label for="fs">Supereroe preferito</label>
+            <div class="dropdown">
+              <label for="fs">Supereroe preferito</label>
+              <input type="text" class="form-control rounded" id="fs" name="fs" placeholder="" required>
+              <ul class="dropdown-menu w-100" id="dropdownFS">
+
+              </ul>
+            </div>
           </div>
 
           <div class="form-check text-start my-3">
@@ -79,6 +85,17 @@
   <script>
     const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&-_])[A-Za-z\d@$!%*?&-_]{8,}$/;
 
+ 
+    document.addEventListener('click', function(event) {
+      const dropdown = document.querySelector('.dropdown');
+      const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+
+      // Check if the click happened outside the dropdown
+      if (!dropdown.contains(event.target)) {
+        dropdownMenu.classList.remove('show'); // Close the dropdown
+      }
+    });
+
     async function register(email, psw, username, fs) {
       if (!regex.test(psw)) {
         console.log(psw)
@@ -89,7 +106,7 @@
         const resp = await fetch("http://localhost:8080/register", {
           method: "POST",
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ "email": email, "password": psw, "username":  username, "favourite_superhero": fs}),
+          body: JSON.stringify({ "email": email, "password": psw, "username": username, "favourite_superhero": fs }),
           redirect: "follow"
         });
         console.log(resp);
@@ -121,26 +138,26 @@
       cpsw.classList.remove('border', 'border-danger');
       usr.classList.remove('border', 'border-danger');
 
-      if(email.value != cemail.value){ 
+      if (email.value != cemail.value) {
         email.classList.add('border', 'border-danger');
         cemail.classList.add('border', 'border-danger');
         flag = true;
       }
 
-      if(psw.value != cpsw.value){
+      if (psw.value != cpsw.value) {
         psw.classList.add('border', 'border-danger');
         cpsw.classList.add('border', 'border-danger');
         flag = true;
       }
 
-      if(usr.value.length < 5){
+      if (usr.value.length < 5) {
         usr.classList.add('border', 'border-danger');
         flag = true;
       }
 
-      if(flag){ return; }
+      if (flag) { return; }
 
-      const r = await register(email.value, psw.value, usr.value, sp.value);
+      const r = await register(email.value, psw.value, usr.value, sp.getAttribute('placeholder'));
       return r;
     }
 
@@ -160,6 +177,44 @@
         }
       }
 
+    });
+
+
+    let typingTimer;
+    const debounceTime = 2000;
+
+    document.getElementById('fs').addEventListener('input', (event) => {
+      const newValue = event.target.value;
+      const dropdownFS = document.getElementById('dropdownFS');
+      clearTimeout(typingTimer);
+
+      typingTimer = setTimeout(async () => {
+        await fetch(`http://localhost:8080/characters/search/${newValue}`, {
+          method: "GET",
+          headers: { 'Content-Type': 'application/json' },
+          redirect: "follow"
+        })
+          .then(resp => resp.json())
+          .then(data => {
+            console.log(data);
+            data.forEach(sp => {
+              let li = document.createElement('li');
+              let a = document.createElement('a');
+              a.id = sp.id;
+              a.innerText = sp.name;
+              a.classList.add('dropdown-item');
+              li.appendChild(a);
+              a.addEventListener('click', function (event) {
+                event.preventDefault();
+                document.getElementById('fs').value = sp.name;
+                document.getElementById('fs').setAttribute('placeholder', sp.id);
+              })
+              document.getElementById('dropdownFS').appendChild(li);
+            });
+            dropdownFS.classList.add('show');
+          })
+          .catch(error => console.error(error));
+      }, 2000);
     });
 
     function alertShow(message) {

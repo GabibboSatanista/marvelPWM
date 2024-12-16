@@ -88,6 +88,11 @@ app.get("/characters/:characterId", function(req, res){
     utils.getCharacterById(res, id);
 })
 
+app.get("/characters/search/:name", function(req, res){
+    let name = req.params.name;
+    utils.searchSuperHero(res, name);
+})
+
 app.post("/pack/open", function(req, res){
     let id = req.body.id;
     utils.openPack(res, id);

@@ -53,6 +53,16 @@
   <script>
     const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&-_])[A-Za-z\d@$!%*?&-_]{8,}$/;
 
+    document.addEventListener('click', function(event) {
+      const dropdown = document.querySelector('.dropdown');
+      const dropdownMenu = dropdown.querySelector('.dropdown-menu');
+
+      // Check if the click happened outside the dropdown
+      if (!dropdown.contains(event.target)) {
+        dropdownMenu.classList.remove('show'); // Close the dropdown
+      }
+    });
+
     /*
     document.getElementById('password').addEventListener('change', function (event) {
       event.preventDefault();

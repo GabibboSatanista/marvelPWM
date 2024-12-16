@@ -7,7 +7,8 @@ module.exports = {
     changeUsername: changeUsername,
     getCharacterById: getCharacterById,
     openPack: openPack,
-    addCredits: addCredits
+    addCredits: addCredits,
+    searchSuperHero: searchSuperHero
 }
 
 const { response } = require('express');
@@ -183,7 +184,48 @@ async function openPack(res, userId) {
     }
 }
 
-async function addCredits(res, numberOfCredits,userId) {
+async function searchSuperHero(res, nameSH) {
+    try {
+        let out = [];
+        let data_out;
+        const timestamp = Date.now();
+        const hash = CryptoJS.MD5(timestamp + privateKey + publicKey).toString(CryptoJS.enc.Hex);
+
+        const baseURL = "https://gateway.marvel.com/v1/public/characters";
+        const limit = 5; // Numero di eroi da ottenere
+        const url = `${baseURL}?nameStartsWith=${nameSH}&orderBy=name&limit=${limit}&apikey=${publicKey}&ts=${timestamp}&hash=${hash}`;
+        const response = await fetch(url);
+        const data = await response.json();
+        console.log(data);
+
+        data.data.results.forEach(character =>  {
+            let essentials = {
+                id: character.id.toString(),
+                name: character.name,
+                description: character.description,
+                thumbnail: {
+                    url: `${character.thumbnail.path}.${character.thumbnail.extension}`,
+                },
+            };
+            data_out = data;
+            out.push(essentials);
+        })
+
+        if (data_out.code === 200) {
+            res.status(200).send(out);
+            return;
+        } else {
+            console.error("Errore API Marvel:", data_out);
+            res.status(data_out.code).send('Marvel Error');
+            return;
+        }
+    } catch (error) {
+        console.error("Errore durante la richiesta:", error);
+        res.status(400).send('Nessun super eroe trovato');
+    }
+}
+
+async function addCredits(res, numberOfCredits, userId) {
     try {
         const r = await mdb.addCredits(userId, numberOfCredits, client);
         if (r.success == false) {
