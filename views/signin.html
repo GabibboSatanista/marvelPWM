@@ -85,8 +85,8 @@
   <script>
     const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&-_])[A-Za-z\d@$!%*?&-_]{8,}$/;
 
- 
-    document.addEventListener('click', function(event) {
+
+    document.addEventListener('click', function (event) {
       const dropdown = document.querySelector('.dropdown');
       const dropdownMenu = dropdown.querySelector('.dropdown-menu');
 
@@ -186,35 +186,39 @@
     document.getElementById('fs').addEventListener('input', (event) => {
       const newValue = event.target.value;
       const dropdownFS = document.getElementById('dropdownFS');
+      while(dropdownFS.childElementCount > 0 ){
+        dropdownFS.removeChild(dropdownFS.lastChild);
+    }
       clearTimeout(typingTimer);
-
-      typingTimer = setTimeout(async () => {
-        await fetch(`http://localhost:8080/characters/search/${newValue}`, {
-          method: "GET",
-          headers: { 'Content-Type': 'application/json' },
-          redirect: "follow"
-        })
-          .then(resp => resp.json())
-          .then(data => {
-            console.log(data);
-            data.forEach(sp => {
-              let li = document.createElement('li');
-              let a = document.createElement('a');
-              a.id = sp.id;
-              a.innerText = sp.name;
-              a.classList.add('dropdown-item');
-              li.appendChild(a);
-              a.addEventListener('click', function (event) {
-                event.preventDefault();
-                document.getElementById('fs').value = sp.name;
-                document.getElementById('fs').setAttribute('placeholder', sp.id);
-              })
-              document.getElementById('dropdownFS').appendChild(li);
-            });
-            dropdownFS.classList.add('show');
+      if (newValue !== '') {
+        typingTimer = setTimeout(async () => {
+          await fetch(`http://localhost:8080/characters/search/${newValue}`, {
+            method: "GET",
+            headers: { 'Content-Type': 'application/json' },
+            redirect: "follow"
           })
-          .catch(error => console.error(error));
-      }, 2000);
+            .then(resp => resp.json())
+            .then(data => {
+              console.log(data);
+              data.forEach(sp => {
+                let li = document.createElement('li');
+                let a = document.createElement('a');
+                a.id = sp.id;
+                a.innerText = sp.name;
+                a.classList.add('dropdown-item');
+                li.appendChild(a);
+                a.addEventListener('click', function (event) {
+                  event.preventDefault();
+                  document.getElementById('fs').value = sp.name;
+                  document.getElementById('fs').setAttribute('placeholder', sp.id);
+                })
+                document.getElementById('dropdownFS').appendChild(li);
+              });
+              dropdownFS.classList.add('show');
+            })
+            .catch(error => console.error(error));
+        }, 2000);
+      }
     });
 
     function alertShow(message) {

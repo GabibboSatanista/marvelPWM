@@ -2,3 +2,19 @@ footer{
     background-color: transparent;
     box-shadow: none;
 }
+
+.fake-disabled {
+    background-color: #e9ecef;  /* Colore di sfondo grigio per simulare disabilitato */
+    color: #6c757d;  /* Testo grigio per simulare il testo disabilitato */
+    border: 1px solid #ced4da;  /* Bordo simile agli input disabilitati */
+    opacity: 0.65;  /* Opacità ridotta per l'effetto visivo */
+    cursor: not-allowed;  /* Mostra il cursore "vietato" */
+}
+
+/* Se l'input è attivato tramite doppio clic */
+.fake-disabled.active {
+    background-color: white;
+    opacity: 1;
+    cursor: text;
+    pointer-events: auto;
+}

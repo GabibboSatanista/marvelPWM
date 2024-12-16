@@ -11,7 +11,8 @@ module.exports = {
     changeUsername: changeUsername,
     removeCredits: removeCredits,
     addCardsToUser: addCardsToUser,
-    addCredits: addCredits
+    addCredits: addCredits,
+    changeFavouteSuperhero: changeFavouteSuperhero
 }
 
 //SISTEMARE
@@ -194,6 +195,39 @@ async function changeUsername(id, newUsr, client) {
     } catch (error) {
         console.log(error);
         return { success: false, message: "Errore durante l'aggiornamento della username." };
+    } finally {
+        await closeClientConnection(client);
+    }
+}
+
+async function changeFavouteSuperhero(id, fs, client){
+    require("dotenv").config(); changeUsername
+    const dbName = process.env.db_name;
+    const collectionName = process.env.collection_users;
+    const { ObjectId } = require('mongodb');
+    try {
+        collection = await connectingToTestServer(client, dbName, collectionName);
+        const objectId = new ObjectId(id);
+        // Trova l'utente nel database
+        const user = await collection.findOne({ _id: objectId });
+
+        if (!user) {
+            return { success: false, message: "Utente non trovato." };
+        }
+
+        const result = await collection.updateOne(
+            { _id: objectId },
+            { $set: { favourite_superhero: fs } }
+        );
+
+        if (result.modifiedCount === 1) {
+            return { success: true, message: "super erore preferito aggiornato con successo." };
+        } else {
+            return { success: false, message: "Errore durante l'aggiornamento del super erore preferito." };
+        }
+    } catch (error) {
+        console.log(error);
+        return { success: false, message: "Errore durante l'aggiornamento del super erore preferito." };
     } finally {
         await closeClientConnection(client);
     }

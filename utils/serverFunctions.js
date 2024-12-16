@@ -8,7 +8,8 @@ module.exports = {
     getCharacterById: getCharacterById,
     openPack: openPack,
     addCredits: addCredits,
-    searchSuperHero: searchSuperHero
+    searchSuperHero: searchSuperHero,
+    changeFavouteSuperhero: changeFavouteSuperhero
 }
 
 const { response } = require('express');
@@ -93,6 +94,16 @@ function changeUsername(res, id, newUsr) {
     }
 
     mdb.changeUsername(id, newUsr, client).then(r => {
+        if (r.success == false) {
+            return res.status(404).send(r.message)
+        } else {
+            return res.status(200).send(r.message);
+        }
+    });
+}
+
+function changeFavouteSuperhero(res, id, fs){
+    mdb.changeFavouteSuperhero(id, fs, client).then(r => {
         if (r.success == false) {
             return res.status(404).send(r.message)
         } else {
@@ -239,4 +250,5 @@ async function addCredits(res, numberOfCredits, userId) {
         res.status(500).send('Internal error');
     }
 }
+
 

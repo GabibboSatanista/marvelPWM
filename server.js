@@ -81,6 +81,12 @@ app.post("/user/changeUsername", function(req, res){
     utils.changeUsername(res, id, newUsr);
 })
 
+app.post("/user/changeFavouteSuperhero", function(req, res){
+    let id = req.body.id;
+    let fs = req.body.fs
+    utils.changeFavouteSuperhero(res, id, fs);
+})
+
 //----------------------------------------------------------------------------
 
 app.get("/characters/:characterId", function(req, res){
