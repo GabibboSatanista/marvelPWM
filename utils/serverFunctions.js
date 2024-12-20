@@ -9,7 +9,10 @@ module.exports = {
     openPack: openPack,
     addCredits: addCredits,
     searchSuperHero: searchSuperHero,
-    changeFavouteSuperhero: changeFavouteSuperhero
+    changeFavouteSuperhero: changeFavouteSuperhero,
+    getActiveTrade: getActiveTrade,
+    makeTrade: makeTrade,
+    postTrade: postTrade
 }
 
 const { response } = require('express');
@@ -52,14 +55,26 @@ function addUser(res, user) {
     );
 }
 
-function getUser(res, id) {
-    mdb.getUserFromDB(id, client).then(r => {
+async function getUser(res, id) {
+    try {
+        const r = await mdb.getUserFromDB(id, client);
         if (r !== undefined) {
-            return res.json(r);
+            for(const el of r.collection){
+                const sh = await getCharacterByIdInner(el.id);
+                el.name = sh.name;
+                el.description = sh.description;
+                el.url = sh.thumbnail.url;
+            }
+            return res.status(200).send(r);
         } else {
-            return res.status(400).send("No buono");
+            res.status(400).send("No buono");
+            return null;
         }
-    });
+    } catch (error) {
+        console.error("Errore durante la richiesta dell'utente:", error);
+        res.status(500).send("Internal error");
+        return null;
+    }
 }
 
 function deleteUser(res, id) {
@@ -112,32 +127,45 @@ function changeFavouteSuperhero(res, id, fs){
     });
 }
 
-function getCharacterById(res, characterId) {
+async function getCharacterById(res, characterId) {
     const timestamp = Date.now();
     const hash = CryptoJS.MD5(timestamp + privateKey + publicKey).toString(CryptoJS.enc.Hex);
     const url = `https://gateway.marvel.com/v1/public/characters/${characterId}?ts=${timestamp}&apikey=${publicKey}&hash=${hash}`;
-    fetch(url)
-        .then(response => {
-            if (response.ok) { return response.json(); }
-            else { throw new Error(`${response.status}`) }
-        })
-        .then(data => {
-            if (data.code === 200) {
-                const character = data.data.results[0];
-                const essentials = {
-                    name: character.name,
-                    description: character.description,
-                    thumbnail: {
-                        url: `${character.thumbnail.path}.${character.thumbnail.extension}`,
-                    },
-                };
-                res.status(data.code).send(JSON.stringify(essentials));
-            } else {
-                res.status(data.code).send(JSON.stringify(data.message));
-            }
-        })
-        .catch();
+
+    try {
+        // Fetch the data
+        const response = await fetch(url);
+
+        // Check if the response is ok
+        if (!response.ok) {
+            throw new Error(`HTTP Error: ${response.status}`);
+        }
+
+        // Parse the response
+        const data = await response.json();
+
+        // Check if the response contains a successful status code
+        if (data.code === 200) {
+            const character = data.data.results[0];
+            const essentials = {
+                name: character.name,
+                description: character.description,
+                thumbnail: {
+                    url: `${character.thumbnail.path}.${character.thumbnail.extension}`,
+                },
+            };
+            res.status(data.code).send(JSON.stringify(essentials));
+        } else {
+            res.status(data.code).send(JSON.stringify(data.message));
+        }
+
+    } catch (error) {
+        // Catch any error during the request or processing
+        console.error('Error fetching character data:', error);
+        res.status(500).send('Internal server error');
+    }
 }
+
 
 async function openPack(res, userId) {
     try {
@@ -227,7 +255,7 @@ async function searchSuperHero(res, nameSH) {
             return;
         } else {
             console.error("Errore API Marvel:", data_out);
-            res.status(data_out.code).send('Marvel Error');
+            res.status(data_out.code).send('Il personaggio non esiste.');
             return;
         }
     } catch (error) {
@@ -251,4 +279,127 @@ async function addCredits(res, numberOfCredits, userId) {
     }
 }
 
+async function getActiveTrade(res, userId, limit, offset) {
+    try {
+        const r = await mdb.getActiveTrade(userId, limit, offset, client);
+
+        if (r.success == false) {
+            res.status(404).send(r.message);
+            return;
+        } else {
+            // Usa 'for...of' per aspettare che tutte le operazioni asincrone siano completate
+            for (const el of r.message) {
+                const user = await getUserInner(el.from); // Ottieni l'utente
+                el.username = user.username;
+                const fs = await getCharacterByIdInner(user.favourite_superhero); // Ottieni l'immagine
+                el.favourite_superhero_image = fs.thumbnail.url;
+                for(const character of el.for){
+                    const c = await getCharacterByIdInner(character.id); // Ottieni l'immagine
+                    character.name = c.name;
+                }
+                for(const character of el.want){
+                    const c = await getCharacterByIdInner(character.id); // Ottieni l'immagine
+                    character.name = c.name;
+                }
+            }
+
+            
+            // Rispondi solo dopo che tutte le operazioni asincrone sono terminate
+            res.status(200).send(r.message);
+        }
+    } catch (error) {
+        console.error("Errore durante la richiesta:", error);
+        res.status(500).send('Internal error');
+    }
+}
+
+async function makeTrade(res, tradeId, userId){
+    try{
+        const r = await mdb.makeTrade(tradeId, userId, client);
+        if (r.success == false) {
+            res.status(404).send(r.message);
+            return;
+        } else {
+            res.status(200).send(r.message);
+        }
+    }catch(error){
+        console.error("Errore durante la richiesta:", error);
+        res.status(500).send('Internal error');
+    }
+}
+
+async function postTrade(res, userId, give, wants){
+    try{
+        for(const{id, count} of give){
+            getCharacterById(id);
+        }
+
+        for(const{id, count} of wants){
+            getCharacterById(id);
+        }
+
+        const r = await mdb.postTrade(userId, give, wants, client);
+        if (r.success == false) {
+            res.status(404).send(r.message);
+            return;
+        } else {
+            res.status(200).send(r.message);
+        }
+    }catch(error){
+        console.error("Errore durante la richiesta:", error);
+        res.status(500).send('Internal error');
+    }
+}
+
+async function getCharacterByIdInner(characterId){
+    const timestamp = Date.now();
+    const hash = CryptoJS.MD5(timestamp + privateKey + publicKey).toString(CryptoJS.enc.Hex);
+    const url = `https://gateway.marvel.com/v1/public/characters/${characterId}?ts=${timestamp}&apikey=${publicKey}&hash=${hash}`;
+
+    try {
+        // Fetch the data
+        const response = await fetch(url);
+
+        // Check if the response is ok
+        if (!response.ok) {
+            throw new Error(`HTTP Error: ${response.status}`);
+        }
+
+        // Parse the response
+        const data = await response.json();
+
+        // Check if the response contains a successful status code
+        if (data.code === 200) {
+            const character = data.data.results[0];
+            const essentials = {
+                name: character.name,
+                description: character.description,
+                thumbnail: {
+                    url: `${character.thumbnail.path}.${character.thumbnail.extension}`,
+                },
+            };
+            return essentials;
+        } else {
+            return data.message;
+        }
+
+    } catch (error) {
+        // Catch any error during the request or processing
+        console.error('Error fetching character data:', error);
+        res.status(500).send('Internal server error');
+    }
+}
+
+async function getUserInner(userId){
+    try {
+        const r = await mdb.getUserFromDB(userId, client);
+        if (r !== undefined) {
+            return r;
+        } else {
+            return null;
+        }
+    } catch (error) {
+        return null;
+    }
+}
 

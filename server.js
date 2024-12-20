@@ -48,6 +48,10 @@ app.get('/shop.html', (req, res) => {
     res.sendFile(path.join(__dirname, '/views/shop.html'));
 });
 
+app.get('/trades.html', (req, res) => {
+    res.sendFile(path.join(__dirname, '/views/trades.html'));
+});
+
 //----------------------------------------------------------------------------
 app.post("/login", (req, res) => {
     utils.loginAuth(res, req.body);
@@ -68,20 +72,20 @@ app.delete("/user", function (req, res) {
     utils.deleteUser(res, id);
 });
 
-app.post("/user/changePassword", function(req, res){
+app.post("/user/changePassword", function (req, res) {
     let id = req.body.id;
     let newPsw = req.body.password
     utils.changePassword(res, id, newPsw);
 })
 
 
-app.post("/user/changeUsername", function(req, res){
+app.post("/user/changeUsername", function (req, res) {
     let id = req.body.id;
     let newUsr = req.body.username
     utils.changeUsername(res, id, newUsr);
 })
 
-app.post("/user/changeFavouteSuperhero", function(req, res){
+app.post("/user/changeFavouteSuperhero", function (req, res) {
     let id = req.body.id;
     let fs = req.body.fs
     utils.changeFavouteSuperhero(res, id, fs);
@@ -89,26 +93,45 @@ app.post("/user/changeFavouteSuperhero", function(req, res){
 
 //----------------------------------------------------------------------------
 
-app.get("/characters/:characterId", function(req, res){
+app.get("/characters/:characterId", function (req, res) {
     let id = req.params.characterId;
     utils.getCharacterById(res, id);
 })
 
-app.get("/characters/search/:name", function(req, res){
+app.get("/characters/search/:name", function (req, res) {
     let name = req.params.name;
     utils.searchSuperHero(res, name);
 })
 
-app.post("/pack/open", function(req, res){
+app.post("/pack/open", function (req, res) {
     let id = req.body.id;
     utils.openPack(res, id);
 })
 
-app.post("/credits/add/4", function(req, res){
+app.post("/credits/add/4", function (req, res) {
     let id = req.body.id;
-    utils.addCredits(res, 4,id);
+    utils.addCredits(res, 4, id);
 })
 
+app.post("/trades", function (req, res) {
+    const { tradeId, userId } = req.body;
+    utils.makeTrade(res, tradeId, userId);
+});
+
+app.get("/trades/active", function (req, res) {
+    const { userId, limit, offset } = req.query;
+    utils.getActiveTrade(res, userId, limit, offset);
+});
+
+app.post("/trades/create", function (req, res) {
+    const { userId, give, wants } = req.body;
+
+    if (!Array.isArray(give) || !Array.isArray(wants)) {
+        return res.status(400).json({ error: "Give e Wants deve essere un array" });
+    }
+
+    utils.postTrade(res, userId, give, wants);
+})
 //----------------------------------------------------------------------------
 
 app.listen(port);

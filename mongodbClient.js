@@ -1,5 +1,5 @@
 const { type } = require('os');
-const { resourceUsage } = require('process');
+const { resourceUsage, off } = require('process');
 
 module.exports = {
     startMongoDBConnection: startMongoDBConnection,
@@ -12,7 +12,10 @@ module.exports = {
     removeCredits: removeCredits,
     addCardsToUser: addCardsToUser,
     addCredits: addCredits,
-    changeFavouteSuperhero: changeFavouteSuperhero
+    changeFavouteSuperhero: changeFavouteSuperhero,
+    getActiveTrade: getActiveTrade,
+    makeTrade: makeTrade,
+    postTrade: postTrade
 }
 
 //SISTEMARE
@@ -65,7 +68,7 @@ async function insertUserIntoDB(data, client) {
 
         data.password = encrypt(data.password);
         data.collection = [];
-        data.credits = '0';
+        data.credits = Number('0');
         let resp = await users.insertOne(data);
 
         return;
@@ -99,7 +102,7 @@ async function getUserFromDB(id, client) {
     try {
         collection = await connectingToTestServer(client, dbName, collectionName);
         const objectId = new ObjectId(id);
-        return await collection.find({ _id: objectId }).toArray();
+        return await collection.findOne({ _id: objectId });
     } catch (error) {
         console.log(error);
         return undefined;
@@ -335,7 +338,7 @@ async function addCardsToUser(userId, newCards, client) {
                 // Incrementa il valore di count di 1
                 card.count = (parseInt(card.count) + 1).toString();
             }else{
-                cards.push({id: id, count: "1"})
+                cards.push({id: id, count: 1})
             }
         });
 
@@ -377,6 +380,171 @@ async function doesEmailExist(collection, email) {
     } catch (error) {
         console.error(error);
         return false; // Considera false in caso di errore per sicurezza
+    }
+}
+
+
+async function getActiveTrade(userId, limit, offset, client){
+    require("dotenv").config(); changeUsername
+    const dbName = process.env.db_name;
+    const collectionName = process.env.collection_trades;
+    const { ObjectId } = require('mongodb');
+    try {
+        collection = await connectingToTestServer(client, dbName, collectionName);
+        const objectId = new ObjectId(userId);
+        const trades = await collection.find({ from: {$ne : objectId} }).skip(parseInt(offset, 10)).limit(parseInt(limit, 10)).toArray();
+
+        // Se trade non esiste, restituisci un errore
+        if (!trades) { return { success: false, message: "Nessuno scambio disponibile" }}; 
+        return {success: true, message: trades};
+    } catch (error) {
+        console.log(error);
+        return { success: false, message: error };
+    } finally {
+        await closeClientConnection(client);
+    }
+}
+
+async function makeTrade(tradeId, userId, client) {
+    require("dotenv").config();
+    const dbName = process.env.db_name;
+    const collectionTrades = process.env.collection_trades;
+    const collectionUsers = process.env.collection_users;
+    const { ObjectId } = require("mongodb");
+
+    try {
+        // Ottieni la collezione degli scambi
+        const tradesCollection = client.db(dbName).collection(collectionTrades);
+        const trade = await tradesCollection.findOne({ _id: new ObjectId(tradeId) });
+
+        // Controlla se lo scambio esiste
+        if (!trade) {
+            return { success: false, message: "Nessuno scambio disponibile" };
+        }
+
+        // Ottieni la collezione degli utenti
+        const usersCollection = client.db(dbName).collection(collectionUsers);
+
+        // Controlla se il trade può essere eseguito
+        const tradeCanBeMade = await validateTrade(usersCollection, trade, userId);
+        if (!tradeCanBeMade) {
+            return { success: false, message: "Non è possibile effettuare lo scambio" };
+        }
+
+        // Esegui le operazioni di trade: trasferisci carte tra i due utenti
+        await executeTrade(usersCollection, trade, userId);
+
+        return { success: true, message: "Scambio eseguito con successo" };
+    } catch (error) {
+        console.error("Errore durante l'esecuzione dello scambio:", error);
+        return { success: false, message: error.message };
+    }
+}
+
+
+async function validateTrade(usersCollection, trade, userId) {
+    const { ObjectId } = require("mongodb");
+
+    const fromUser = await usersCollection.findOne({ _id: new ObjectId(trade.from) });
+    const toUser = await usersCollection.findOne({ _id: new ObjectId(userId) });
+
+    if (!fromUser || !toUser) {
+        throw new Error("Utente non trovato");
+    }
+
+    // Controlla se `fromUser` ha abbastanza carte da offrire
+    for (const { id, count } of trade.for) {
+        const card = fromUser.collection.find(item => item.id === id);
+        if (!card || card.count == 1 || card.count < count) {
+            return false; // `fromUser` non ha abbastanza carte
+        }
+    }
+
+    // Controlla se `toUser` ha abbastanza carte richieste
+    for (const { id, count } of trade.want) {
+        const card = toUser.collection.find(item => item.id === id);
+        if (!card || card.count == 1 ||card.count < count) {
+            return false; // `toUser` non ha abbastanza carte
+        }
+    }
+
+    return true;
+}
+
+async function executeTrade(usersCollection, trade, userId) {
+    // Sottrai le carte dal `fromUser` e aggiungile al `toUser`
+    const { ObjectId } = require("mongodb");
+    for (const { id, count } of trade.for) {
+        await usersCollection.updateOne(
+            { _id: new ObjectId(trade.from), "collection.id": id },
+            { $inc: { "collection.$.count": -count } }
+        );
+
+        const resultAdd = await usersCollection.updateOne(
+            { _id: new ObjectId(userId), "collection.id": id },
+            { $inc: { "collection.$.count": count } }
+        );
+
+        if (resultAdd.matchedCount === 0) {
+            await usersCollection.updateOne(
+                { _id: new ObjectId(userId) },
+                { $push: { collection: { id: id, count: count } } }
+            );
+        }
+    }
+
+    // Sottrai le carte dal `toUser` e aggiungile al `fromUser`
+    for (const { id, count } of trade.want) {
+        await usersCollection.updateOne(
+            { _id: new ObjectId(userId), "collection.id": id },
+            { $inc: { "collection.$.count": -count } }
+        );
+
+        const resultAdd = await usersCollection.updateOne(
+            { _id: new ObjectId(trade.from), "collection.id": id },
+            { $inc: { "collection.$.count": count } }
+        );
+
+        if (resultAdd.matchedCount === 0) {
+            await usersCollection.updateOne(
+                { _id: new ObjectId(trade.from) },
+                { $push: { collection: { id: id, count: count } } }
+            );
+        }
+    }
+}
+
+
+async function postTrade(userId, give, wants, client) {
+    require("dotenv").config();
+    const dbName = process.env.db_name;
+    const collectionTrades = process.env.collection_trades;
+    const collectionUsers = process.env.collection_users;
+    const { ObjectId } = require("mongodb");
+
+    try {
+        const usersCollection = await connectingToTestServer(client, dbName, collectionUsers);
+        const user = await usersCollection.findOne({_id: new ObjectId(userId)});
+        if(!user){ return {success: false, message: "Utente non trovato"}; }
+
+        for(const{id, count} of give){
+            const card = user.collection.find( c => c.id === id);
+            if(!card || card.count < 1 ){
+                return {success: false, message: "Non é possibile creare lo scambio"};
+            }
+        }
+
+        const tradesCollection = await connectingToTestServer(client, dbName, collectionTrades);
+        const result = await tradesCollection.insertOne({
+            from: userId,
+            for: give,
+            want: wants
+        });
+        
+        return { success: true, message: "Creazione dello scambio eseguita con successo" };
+    } catch (error) {
+        console.error("Errore durante l'esecuzione della creazione dello scambio:", error);
+        return { success: false, message: error.message };
     }
 }
 

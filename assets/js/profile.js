@@ -51,7 +51,7 @@ async function getUserProfile(id_user) {
         redirect: "follow"
     })
     const data = await resp.json();
-    return data[0];
+    return data;
 }
 
 document.addEventListener('click', function (event) {

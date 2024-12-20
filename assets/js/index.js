@@ -49,7 +49,7 @@ async function getUserProfile(id_user) {
         redirect: "follow"
     })
     const data = await resp.json();
-    return data[0];
+    return data;
 }
 
 
@@ -143,33 +143,30 @@ async function loadCollectionPage() {
     const offcanvas = document.getElementById('offcanvas');
     activateSpinner(collectionPage);
     // Creazione di un array di promesse
-    const promises = userData.collection.map(async el => {
+    
+    userData.collection.map(el => {
         let clone = toClone.cloneNode(true);
         clone.id = el.id;
-        let data = await getDataMarvelById(el.id);
-        clone.getElementsByClassName('card-img')[0].src = data.thumbnail.url;
-        clone.getElementsByClassName('card-title')[0].innerText = data.name;
+        clone.getElementsByClassName('card-img')[0].src = el.url;
+        clone.getElementsByClassName('card-title')[0].innerText = el.name;
         clone.getElementsByClassName('card-text')[0].innerText = el.count;
         clone.classList.remove('d-none');
-        clone.addEventListener('click', async function (event) {
+        clone.addEventListener('click', function (event) {
             event.preventDefault();
             let ct = event.currentTarget;
             const offcanvasInstance = new bootstrap.Offcanvas(offcanvas);
             let img = offcanvas.getElementsByClassName('img-fluid')[0];
-            let data = await getDataMarvelById(ct.id);
-            img.src = data.thumbnail.url;
+            img.src = el.url;
             let title = offcanvas.getElementsByClassName('offcanvas-title')[0];
-            title.innerText = data.name;
+            title.innerText = el.name;
             let body = offcanvas.getElementsByClassName('offcanvas-body')[0];
-            body.innerText = data.description;
+            body.innerText = el.description;
 
             offcanvasInstance.show();
         });
         toClone.after(clone);
     });
 
-    // Attendi il completamento di tutte le promesse
-    await Promise.all(promises);
     deactivateSpinner(collectionPage);
     // Rimuovi la classe 'd-none' dopo che tutto è completato
     card_collection.classList.remove('d-none');
@@ -233,10 +230,15 @@ async function openPack() {
 
 document.addEventListener('DOMContentLoaded', function () {
     const shopDiv = document.getElementById('shopDiv');
-
+    const tradesDiv = document.getElementById('tradesDiv');
     if (shopDiv) {
         shopDiv.addEventListener('click', function () {
             window.location.href = '/shop.html';
+        });
+    }
+    if (tradesDiv) {
+        tradesDiv.addEventListener('click', function () {
+            window.location.href = '/trades.html';
         });
     }
 
