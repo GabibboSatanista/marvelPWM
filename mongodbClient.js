@@ -414,7 +414,7 @@ async function makeTrade(tradeId, userId, client) {
 
     try {
         // Ottieni la collezione degli scambi
-        const tradesCollection = client.db(dbName).collection(collectionTrades);
+        const tradesCollection = await connectingToTestServer(client, dbName, collectionTrades);
         const trade = await tradesCollection.findOne({ _id: new ObjectId(tradeId) });
 
         // Controlla se lo scambio esiste
@@ -433,7 +433,6 @@ async function makeTrade(tradeId, userId, client) {
 
         // Esegui le operazioni di trade: trasferisci carte tra i due utenti
         await executeTrade(usersCollection, trade, userId);
-
         return { success: true, message: "Scambio eseguito con successo" };
     } catch (error) {
         console.error("Errore durante l'esecuzione dello scambio:", error);

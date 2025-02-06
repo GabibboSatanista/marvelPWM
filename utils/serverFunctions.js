@@ -316,9 +316,9 @@ async function getActiveTrade(res, userId, limit, offset) {
 async function makeTrade(res, tradeId, userId){
     try{
         const r = await mdb.makeTrade(tradeId, userId, client);
-        if (r.success == false) {
+        console.log(r.message)
+        if (!r.success) {
             res.status(404).send(r.message);
-            return;
         } else {
             res.status(200).send(r.message);
         }
