@@ -523,17 +523,37 @@ async function postTrade(userId, give, wants, client) {
 
     try {
         const usersCollection = await connectingToTestServer(client, dbName, collectionUsers);
+        const tradesCollection = await connectingToTestServer(client, dbName, collectionTrades);
         const user = await usersCollection.findOne({_id: new ObjectId(userId)});
+        const userActiveTrades = await tradesCollection.find({from: userId}).toArray();
+        console.log(userActiveTrades)
         if(!user){ return {success: false, message: "Utente non trovato"}; }
+
+        let activeTradesMap = new Map();
+        userActiveTrades.forEach(el =>{
+            el.for.forEach(card => {
+                activeTradesMap.set(card.id, activeTradesMap.has(card.id) ? activeTradesMap.get(card.id) + card.count : card.count)
+            })
+        })
+
 
         for(const{id, count} of give){
             const card = user.collection.find( c => c.id === id);
-            if(!card || card.count < 1 ){
+            const alreadyInTradeCount = activeTradesMap.has(id) ? activeTradesMap.get(id) : 0
+            if(!card || card.count - alreadyInTradeCount < 1 ){
                 return {success: false, message: "Non é possibile creare lo scambio"};
             }
         }
 
-        const tradesCollection = await connectingToTestServer(client, dbName, collectionTrades);
+        let giveMap = new Map(give.map(obj => [obj.id, obj.count]))
+        let wantsMap = new Map(wants.map(obj => [obj.id, obj.count]))
+
+        for (let key of giveMap.keys()) {
+            if (wantsMap.has(key)) {
+                return {success: false, message: "Sono presenti carti uguali."};
+            }
+        }
+
         const result = await tradesCollection.insertOne({
             from: userId,
             for: give,

@@ -52,6 +52,11 @@ app.get('/trades.html', (req, res) => {
     res.sendFile(path.join(__dirname, '/views/trades.html'));
 });
 
+app.get('/insert.html', (req, res) => {
+    res.sendFile(path.join(__dirname, '/views/insert.html'));
+});
+
+
 //----------------------------------------------------------------------------
 app.post("/login", (req, res) => {
     utils.loginAuth(res, req.body);

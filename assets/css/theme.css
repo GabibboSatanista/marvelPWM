@@ -100,10 +100,10 @@ a:hover {
     /* Arrotonda i due angoli opposti */
     background-color: var(--bg-color);
     transition: transform 0.1s ease;
-    
+
 }
 
-.d-flex.flex-row .my-container{
+.d-flex.flex-row .my-container {
     cursor: pointer;
 }
 
@@ -190,36 +190,50 @@ a:hover {
 
 .copper {
     background: linear-gradient(135deg,
-            rgba(184, 115, 51, 0.8), /* Rame chiaro (trasparente) */
-            rgba(139, 69, 19, 0.9), /* Rame scuro (più intenso) */
-            rgba(218, 165, 32, 0.8), /* Ottone brillante */
-            rgba(184, 115, 51, 0.7), /* Rame chiaro */
-            rgba(139, 69, 19, 0.9), /* Rame scuro */
-            rgba(218, 165, 32, 0.8) /* Ottone brillante */
+            rgba(184, 115, 51, 0.8),
+            /* Rame chiaro (trasparente) */
+            rgba(139, 69, 19, 0.9),
+            /* Rame scuro (più intenso) */
+            rgba(218, 165, 32, 0.8),
+            /* Ottone brillante */
+            rgba(184, 115, 51, 0.7),
+            /* Rame chiaro */
+            rgba(139, 69, 19, 0.9),
+            /* Rame scuro */
+            rgba(218, 165, 32, 0.8)
+            /* Ottone brillante */
         );
 }
 
-.img-thumbnail{
-    width: 100px; 
-    height: 100px; 
+.img-thumbnail {
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
 }
 
 .cover-img {
-    width: 100%; /* L'immagine si estende completamente in larghezza */
-    height: 100%; /* L'immagine si estende completamente in altezza */
-    object-fit: cover; /* Copre tutta l'area senza distorsioni */
-    object-position: center; /* Posiziona il contenuto centrato */
+    width: 100%;
+    /* L'immagine si estende completamente in larghezza */
+    height: 100%;
+    /* L'immagine si estende completamente in altezza */
+    object-fit: cover;
+    /* Copre tutta l'area senza distorsioni */
+    object-position: center;
+    /* Posiziona il contenuto centrato */
 }
 
-#collectionPage main .card{
-    width: 100px; 
-    height: 150px; 
+#collectionPage main .card,
+#offerCardsPage main .card {
+    width: 100px;
+    height: 150px;
     overflow: hidden;
     transition: transform 0.1s ease-in-out;
     cursor: pointer;
 }
 
-#collectionPage main .card:hover, #collectionPage main .card:active{
+#collectionPage main .card:hover,
+#collectionPage main .card:active,
+#offerCardsPage main .card:hover,
+#offerCardsPage main .card:active {
     transform: scale(1.1);
 }

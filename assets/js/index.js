@@ -143,7 +143,7 @@ async function loadCollectionPage() {
     const offcanvas = document.getElementById('offcanvas');
     activateSpinner(collectionPage);
     // Creazione di un array di promesse
-    
+    console.log(userData)
     userData.collection.map(el => {
         let clone = toClone.cloneNode(true);
         clone.id = el.id;
@@ -153,15 +153,41 @@ async function loadCollectionPage() {
         clone.classList.remove('d-none');
         clone.addEventListener('click', function (event) {
             event.preventDefault();
-            let ct = event.currentTarget;
+            console.log(el)
+            const ct = event.currentTarget;
             const offcanvasInstance = new bootstrap.Offcanvas(offcanvas);
-            let img = offcanvas.getElementsByClassName('img-fluid')[0];
+            const img = offcanvas.getElementsByClassName('img-fluid')[0];
             img.src = el.url;
-            let title = offcanvas.getElementsByClassName('offcanvas-title')[0];
+            const title = offcanvas.getElementsByClassName('offcanvas-title')[0];
             title.innerText = el.name;
-            let body = offcanvas.getElementsByClassName('offcanvas-body')[0];
-            body.innerText = el.description;
+            const body = offcanvas.getElementsByClassName('offcanvas-body')[0];
+            body.replaceChildren()
 
+            const desc =  document.createElement('p')         //FINIRE DI METTERE LE PARTI SERIES, COMICS E EVENTS + AGGIUNGERE SCAMBIO FIGURINE PER CREDITI
+            desc.innerHTML = "<b>Descrizione</b><br>"+ el.description
+            
+            const series = document.createElement('p')
+            series.innerHTML = "<b>Serie</b><br><ul>"
+            Array.from(el.series).forEach(e => {
+                series.innerHTML += "<li>" + e.name + "</li>"
+            }) 
+            series.innerHTML += "<ul>"
+            const events = document.createElement('p')
+            events.innerHTML += "<b>Eventi</b><br><ul>"
+            Array.from(el.events).forEach(e => {
+                events.innerHTML += "<li>" + e.name + "</li>"
+            }) 
+            events.innerHTML += "<ul>"
+            const comics = document.createElement('p')
+            comics.innerHTML += "<b>Fumetti</b><br><ul>"
+            Array.from(el.events).forEach(e => {
+                comics.innerHTML += "<li>" + e.name + "</li>"
+            }) 
+            comics.innerHTML += "</ul>"
+            body.appendChild(desc)
+            body.appendChild(series)
+            body.appendChild(events)
+            body.appendChild(comics)
             offcanvasInstance.show();
         });
         toClone.after(clone);

@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Scambi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+    <link rel="stylesheet" href="../css/theme.css">
+    <link rel="stylesheet" href="../css/other.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
+</head>
+
+<body style="background-color: #3a3838;">
+
+    <!--offerCardsPage-->
+    <div id="offerCardsPage" class="d-none p-1">
+        <header class="text-center shadow p-2">
+            <h1 class="my-4">Offri</h1>
+        </header>
+
+        <main class="container mt-3 mb-1">
+            <!--<div class="spinner-border d-none position-absolute top-50 start-50" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>-->
+            <div class="row justify-content-center mb-3" id="card_collection"
+                style="max-height: 80vh; overflow-y: scroll">
+                <div class="col-4 col-md-4 col-lg-3 mb-3 d-none">
+                    <div class="card text-bg-dark">
+                        <img class="card-img img-fluid cover-img" alt="...">
+                        <div class="card-img-overlay h-100 w-100">
+                            <div class="position-absolute bottom-0 start-0 w-100"
+                                style="background-color: rgba(0,0,0, 0.8); height: 24%;"></div>
+                            <h5 class="position-absolute bottom-0 start-0 card-title mx-2 w-100 text-truncate"></h5>
+                            <h5 class="position-absolute top-0 end-0 p-2 card-text"
+                                style="background-color: red; border: 1px solid black; font-size: 1rem;"></h5>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <div class="d-flex w-100 justify-content-center" style="z-index: 100; position: fixed; bottom: 7%;">
+            <button class="btn btn-primary w-50" onclick="pageActivator('receive', true)">
+                Avanti
+            </button>
+        </div>
+
+        <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvas" aria-labelledby="offcanvasLabel"
+            style="height: 60%;">
+            <div class="" style="min-height: 65% ; overflow-y: hidden;">
+                <img class="img-fluid">
+            </div>
+            <div class="offcanvas-header">
+                <h1 class="offcanvas-title" id="offcanvasLabel"></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+            </div>
+            <div class="offcanvas-body">
+                <div class="d-flex flex-row mb-3">
+                    <div class="form-group w-100 mx-1">
+                        <div class="input-group input-number">
+                            <input type="number" class="form-control" data-bs-input id="inputNumber" name="inputNumber"
+                                value="0" step="1" min="0" max="100" />
+                            <span class="input-group-text align-buttons flex-column">
+                                <i class="bi bi-chevron-up" style="font-size: 0.5rem;"></i>
+                                <i class="bi bi-chevron-down" style="font-size: 0.5rem;"></i>
+                            </span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary mx-1" id="addOfferCard">Aggiungi</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <div id="receiveCardsPage" class="d-none p-1">
+        <header class="text-center shadow p-2">
+            <h1 class="my-4">Ricevi</h1>
+        </header>
+
+        <main class="container mt-3 mb-5 pt-3">
+            <!--<div class="spinner-border d-none position-absolute top-50 start-50" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>-->
+
+            <div class="d-flex flex-row">
+                <div class="form-floating w-50 mx-auto">
+                    <div class="dropdown">
+                        <input type="text" class="form-control rounded" id="fs" name="fs" placeholder="" required>
+                        <ul class="dropdown-menu w-100" id="dropdownFS">
+                            
+                        </ul>
+                    </div>
+                </div>
+                <div class="form-group mx-auto">
+                    <div class="input-group input-number" id="input_group_receive">
+                        <input type="number" class="form-control" data-bs-input id="numberOfWantedCards" name="numberOfWantedCards" value="0" step="1" min="0"
+                            max="10" />
+                        <span class="input-group-text align-buttons flex-column">
+                            <i class="bi bi-chevron-up" style="font-size: 0.5rem;"></i>
+                            <i class="bi bi-chevron-down" style="font-size: 0.5rem;"></i>
+                        </span>
+                    </div>
+                </div>
+                <button class="btn btn-primary mx-auto" id="receiveAddingButton"><i class="bi bi-plus-lg"
+                        style="font-size: 1.1rem;"></i></button>
+            </div>
+            <hr>
+
+            <div style="max-height: 80vh; overflow-y:scroll">
+                <table class="table table-dark">
+                    <thead>
+                      <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">ID</th>
+                        <th scope="col">Nome</th>
+                        <th scope="col">Quantitá</th>
+                      </tr>
+                    </thead>
+                    <tbody id = "tableBody">
+                      
+                    </tbody>
+                  </table>
+            </div>
+        </main>
+
+        <div class="d-flex w-100 justify-content-center p-2" style="z-index: 100; position: fixed; bottom: 7%;">
+            <button class="btn btn-primary w-50" onclick="postTrade()">
+                Conferma
+            </button>
+        </div>
+    </div>
+
+
+
+    <footer class="fixed-bottom">
+        <div class="d-flex flex-row justify-content-evenly align-items-center nb">
+            <a id="home" onclick="window.location.href='index.html';"><i class="bi bi-x-lg"></i></a>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+
+    <script src="../js/insert.js" defer></script>
+</body>
+
+</html>
