@@ -303,12 +303,16 @@ async function getActiveTrade(res, userId, limit, offset) {
                 const fs = await getCharacterByIdInner(user.favourite_superhero); // Ottieni l'immagine
                 el.favourite_superhero_image = fs.thumbnail.url;
                 for (const character of el.for) {
-                    const c = await getCharacterByIdInner(character.id); // Ottieni l'immagine
-                    character.name = c.name;
+                    if(character.id !== '#credits'){
+                        const c = await getCharacterByIdInner(character.id); // Ottieni l'immagine
+                        character.name = c.name;
+                    }
                 }
                 for (const character of el.want) {
-                    const c = await getCharacterByIdInner(character.id); // Ottieni l'immagine
-                    character.name = c.name;
+                    if(character.id !== '#credits'){
+                        const c = await getCharacterByIdInner(character.id); // Ottieni l'immagine
+                        character.name = c.name;
+                    }
                 }
             }
 
@@ -340,12 +344,17 @@ async function makeTrade(res, tradeId, userId) {
 async function postTrade(res, userId, give, wants) {
     try {
         for (const { id, count } of give) {
-            await getCharacterByIdInner(id);
+            if(id != '#credits'){
+                await getCharacterByIdInner(id);
+            }
         }
 
         for (const { id, count } of wants) {
-            await getCharacterByIdInner(id);
+            if(id != '#credits'){
+                await getCharacterByIdInner(id);
+            }
         }
+
         const r = await mdb.postTrade(userId, give, wants, client);
         if (r.success == false) {
             res.status(404).send(r.message);

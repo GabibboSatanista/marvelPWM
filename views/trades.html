@@ -18,7 +18,7 @@
 
     <!--MAIN PAGE-->
     <div id="mainTrade" class="p-1">
-        <header class="text-center shadow p-2">
+        <header class="text-center shadow p-2 mx-auto col-12 col-lg-4">
             <h1 class="my-4">Scambi</h1>
         </header>
 
@@ -42,14 +42,14 @@
             </button>
         </div>
 
-        <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvas" aria-labelledby="offcanvasLabel"
-            style="height: 60%;">
+        <div class="offcanvas offcanvas-bottom mx-auto col-12 col-lg-6 rounded-top" tabindex="-1" id="offcanvas"
+            aria-labelledby="offcanvasLabel" style="height: 60%;">
             <div class="offcanvas-header">
                 <h1 class="offcanvas-title" id="offcanvasLabel"></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
             <div class="offcanvas-body h-100">
-                <div class="row ">
+                <div class="row">
                     <div class="col">
                         <p>Da:</p>
                         <ul class="giveCards">
@@ -60,20 +60,19 @@
                         <ul class="wantsCards">
                         </ul>
                     </div>
-                    <!--METTERLO SOTTO E FIXED + aggiunta offcanvas per mostrare i dettagli quando clicchi su card, nascondere l'avanzo-->
-                    <div class="d-block fixed-bottom  w-100 mb-2">
-                        <div class="d-flex w-100">
-                            <p class="w-100" id="resultTrade"></p>
-                        </div>
-                        <div class="d-flex justify-content-end w-100"><button
-                                class="btn btn-primary  acceptTradeButton">accetta</button></div>
+                </div> <!--SISTEMARE POSIZONE BUTTON-->
+                <div class="d-flex position-relative fixed-bottom p-2">
+                    <div class="d-flex w-100">
+                        <p class="w-100" id="resultTrade"></p>
                     </div>
+                    <div class="d-flex justify-content-end w-100"><button
+                            class="btn btn-primary  acceptTradeButton">accetta</button></div>
                 </div>
             </div>
         </div>
 
 
-        <footer class="fixed-bottom">
+        <footer class="fixed-bottom mx-auto col-12 col-lg-4">
             <div class="d-flex flex-row justify-content-evenly align-items-center nb">
                 <a id="home" onclick="window.location.href='index.html';"><i class="bi bi-x-lg"></i></a>
             </div>

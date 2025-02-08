@@ -163,26 +163,26 @@ async function loadCollectionPage() {
             const body = offcanvas.getElementsByClassName('offcanvas-body')[0];
             body.replaceChildren()
 
-            const desc =  document.createElement('p')         //FINIRE DI METTERE LE PARTI SERIES, COMICS E EVENTS + AGGIUNGERE SCAMBIO FIGURINE PER CREDITI
-            desc.innerHTML = "<b>Descrizione</b><br>"+ el.description
-            
+            const desc = document.createElement('p')         //FINIRE DI METTERE LE PARTI SERIES, COMICS E EVENTS + AGGIUNGERE SCAMBIO FIGURINE PER CREDITI
+            desc.innerHTML = "<b>Descrizione</b><br>" + el.description
+
             const series = document.createElement('p')
             series.innerHTML = "<b>Serie</b><br><ul>"
             Array.from(el.series).forEach(e => {
-                series.innerHTML += "<li>" + e.name + "</li>"
-            }) 
-            series.innerHTML += "<ul>"
+                series.innerHTML += "<li class='mx-4'>" + e.name + "</li>"
+            })
+            series.innerHTML += "</ul>"
             const events = document.createElement('p')
-            events.innerHTML += "<b>Eventi</b><br><ul>"
+            events.innerHTML += "<b>Eventi</b><br><ul class='mx-3'>"
             Array.from(el.events).forEach(e => {
-                events.innerHTML += "<li>" + e.name + "</li>"
-            }) 
-            events.innerHTML += "<ul>"
+                events.innerHTML += "<li class='mx-4'>" + e.name + "</li>"
+            })
+            events.innerHTML += "</ul>"
             const comics = document.createElement('p')
-            comics.innerHTML += "<b>Fumetti</b><br><ul>"
+            comics.innerHTML += "<b>Fumetti</b><br><ul class='mx-3'>"
             Array.from(el.events).forEach(e => {
-                comics.innerHTML += "<li>" + e.name + "</li>"
-            }) 
+                comics.innerHTML += "<li class='mx-4'>" + e.name + "</li>"
+            })
             comics.innerHTML += "</ul>"
             body.appendChild(desc)
             body.appendChild(series)

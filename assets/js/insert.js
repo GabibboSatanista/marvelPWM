@@ -191,7 +191,7 @@ document.getElementById('fs').addEventListener('input', (event) => {
         dropdownFS.removeChild(dropdownFS.lastChild);
     }
     clearTimeout(typingTimer);
-    if (newValue !== '' && !newValue.contains("#")) {
+    if (!newValue.includes('#')) {
         typingTimer = setTimeout(async () => {
             await fetch(`http://localhost:8080/characters/search/${newValue}`, {
                 method: "GET",
@@ -219,6 +219,8 @@ document.getElementById('fs').addEventListener('input', (event) => {
                 })
                 .catch(error => console.error(error));
         }, 2000);
+    }else if(newValue.includes('#credits')){
+        document.getElementById('fs').setAttribute('placeholder', '#credits');
     }
 });
 

@@ -34,18 +34,7 @@ async function loadActiveTrades() {
                 clone.id = trade['_id']
                 clone.getElementsByTagName('h5')[0].innerText = trade.username;
                 clone.getElementsByTagName('img')[0].src = trade.favourite_superhero_image;
-                //const giveCards = clone.getElementsByClassName("giveCards")[0];
-                //trade.for.forEach(el => {
-                //    const li = document.createElement('li');
-                //    li.innerText = el.name + " x" + el.count;
-                //    giveCards.appendChild(li); 
-                //})
-                //const wantsCards = clone.getElementsByClassName("wantsCards")[0];
-                //trade.want.forEach(el => {
-                //    const li = document.createElement('li');
-                //   li.innerText = el.name + " x" + el.count;
-                //    wantsCards.appendChild(li); 
-                //})
+
                 clone.classList.remove('d-none');
 
                 clone.addEventListener('click', (event) => {
@@ -65,7 +54,7 @@ async function loadActiveTrades() {
                     wantsCards.replaceChildren()
                     trade.want.forEach(el => {
                         const li = document.createElement('li');
-                        li.innerText = el.name + " x" + el.count;
+                        li.innerText = el.name ? el.name : (el.id == "#credits" ? "credits" : el.id)  + " x" + el.count;
                         wantsCards.appendChild(li);
                     })
 

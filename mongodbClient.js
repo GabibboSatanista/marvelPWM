@@ -203,7 +203,7 @@ async function changeUsername(id, newUsr, client) {
     }
 }
 
-async function changeFavouteSuperhero(id, fs, client){
+async function changeFavouteSuperhero(id, fs, client) {
     require("dotenv").config(); changeUsername
     const dbName = process.env.db_name;
     const collectionName = process.env.collection_users;
@@ -337,8 +337,8 @@ async function addCardsToUser(userId, newCards, client) {
             if (card) {
                 // Incrementa il valore di count di 1
                 card.count = (parseInt(card.count) + 1).toString();
-            }else{
-                cards.push({id: id, count: 1})
+            } else {
+                cards.push({ id: id, count: 1 })
             }
         });
 
@@ -384,7 +384,7 @@ async function doesEmailExist(collection, email) {
 }
 
 
-async function getActiveTrade(userId, limit, offset, client){
+async function getActiveTrade(userId, limit, offset, client) {
     require("dotenv").config(); changeUsername
     const dbName = process.env.db_name;
     const collectionName = process.env.collection_trades;
@@ -392,11 +392,11 @@ async function getActiveTrade(userId, limit, offset, client){
     try {
         collection = await connectingToTestServer(client, dbName, collectionName);
         const objectId = new ObjectId(userId);
-        const trades = await collection.find({ from: {$ne : objectId} }).skip(parseInt(offset, 10)).limit(parseInt(limit, 10)).toArray();
+        const trades = await collection.find({ from: { $ne: objectId } }).skip(parseInt(offset, 10)).limit(parseInt(limit, 10)).toArray();
 
         // Se trade non esiste, restituisci un errore
-        if (!trades) { return { success: false, message: "Nessuno scambio disponibile" }}; 
-        return {success: true, message: trades};
+        if (!trades) { return { success: false, message: "Nessuno scambio disponibile" } };
+        return { success: true, message: trades };
     } catch (error) {
         console.log(error);
         return { success: false, message: error };
@@ -433,6 +433,7 @@ async function makeTrade(tradeId, userId, client) {
 
         // Esegui le operazioni di trade: trasferisci carte tra i due utenti
         await executeTrade(usersCollection, trade, userId);
+        tradesCollection.deleteOne({_id: new ObjectId(tradeId)})
         return { success: true, message: "Scambio eseguito con successo" };
     } catch (error) {
         console.error("Errore durante l'esecuzione dello scambio:", error);
@@ -453,17 +454,29 @@ async function validateTrade(usersCollection, trade, userId) {
 
     // Controlla se `fromUser` ha abbastanza carte da offrire
     for (const { id, count } of trade.for) {
-        const card = fromUser.collection.find(item => item.id === id);
-        if (!card || card.count == 1 || card.count < count) {
-            return false; // `fromUser` non ha abbastanza carte
+        if (id !== '#credits') {
+            const card = fromUser.collection.find(item => item.id === id);
+            if (!card || card.count == 1 || card.count < count) {
+                return false; // `fromUser` non ha abbastanza carte
+            }
+        } else {
+            if (fromUser.credits < count) {
+                return false
+            }
         }
     }
 
     // Controlla se `toUser` ha abbastanza carte richieste
     for (const { id, count } of trade.want) {
-        const card = toUser.collection.find(item => item.id === id);
-        if (!card || card.count == 1 ||card.count < count) {
-            return false; // `toUser` non ha abbastanza carte
+        if (id !== '#credits') {
+            const card = toUser.collection.find(item => item.id === id);
+            if (!card || card.count == 1 || card.count < count) {
+                return false; // `fromUser` non ha abbastanza carte
+            }
+        } else {
+            if (toUser.credits < count) {
+                return false
+            }
         }
     }
 
@@ -474,40 +487,62 @@ async function executeTrade(usersCollection, trade, userId) {
     // Sottrai le carte dal `fromUser` e aggiungile al `toUser`
     const { ObjectId } = require("mongodb");
     for (const { id, count } of trade.for) {
-        await usersCollection.updateOne(
-            { _id: new ObjectId(trade.from), "collection.id": id },
-            { $inc: { "collection.$.count": -count } }
-        );
+        if (id !== "#credits") {
+            await usersCollection.updateOne(
+                { _id: new ObjectId(trade.from), "collection.id": id },
+                { $inc: { "collection.$.count": -count } }
+            );
 
-        const resultAdd = await usersCollection.updateOne(
-            { _id: new ObjectId(userId), "collection.id": id },
-            { $inc: { "collection.$.count": count } }
-        );
+            const resultAdd = await usersCollection.updateOne(
+                { _id: new ObjectId(userId), "collection.id": id },
+                { $inc: { "collection.$.count": count } }
+            );
 
-        if (resultAdd.matchedCount === 0) {
+            if (resultAdd.matchedCount === 0) {
+                await usersCollection.updateOne(
+                    { _id: new ObjectId(userId) },
+                    { $push: { collection: { id: id, count: count } } }
+                );
+            }
+        } else {
+            await usersCollection.updateOne(
+                { _id: new ObjectId(trade.from) },
+                { $inc: { "credits": + count } }
+            );
             await usersCollection.updateOne(
                 { _id: new ObjectId(userId) },
-                { $push: { collection: { id: id, count: count } } }
+                { $inc: { "credits": - count } }
             );
         }
     }
 
     // Sottrai le carte dal `toUser` e aggiungile al `fromUser`
     for (const { id, count } of trade.want) {
-        await usersCollection.updateOne(
-            { _id: new ObjectId(userId), "collection.id": id },
-            { $inc: { "collection.$.count": -count } }
-        );
+        if (id !== "#credits") {
+            await usersCollection.updateOne(
+                { _id: new ObjectId(userId), "collection.id": id },
+                { $inc: { "collection.$.count": -count } }
+            );
 
-        const resultAdd = await usersCollection.updateOne(
-            { _id: new ObjectId(trade.from), "collection.id": id },
-            { $inc: { "collection.$.count": count } }
-        );
+            const resultAdd = await usersCollection.updateOne(
+                { _id: new ObjectId(trade.from), "collection.id": id },
+                { $inc: { "collection.$.count": count } }
+            );
 
-        if (resultAdd.matchedCount === 0) {
+            if (resultAdd.matchedCount === 0) {
+                await usersCollection.updateOne(
+                    { _id: new ObjectId(trade.from) },
+                    { $push: { collection: { id: id, count: count } } }
+                );
+            }
+        }else{
             await usersCollection.updateOne(
                 { _id: new ObjectId(trade.from) },
-                { $push: { collection: { id: id, count: count } } }
+                { $inc: { "credits": + count } }
+            );
+            await usersCollection.updateOne(
+                { _id: new ObjectId(userId) },
+                { $inc: { "credits": - count } }
             );
         }
     }
@@ -524,24 +559,24 @@ async function postTrade(userId, give, wants, client) {
     try {
         const usersCollection = await connectingToTestServer(client, dbName, collectionUsers);
         const tradesCollection = await connectingToTestServer(client, dbName, collectionTrades);
-        const user = await usersCollection.findOne({_id: new ObjectId(userId)});
-        const userActiveTrades = await tradesCollection.find({from: userId}).toArray();
+        const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
+        const userActiveTrades = await tradesCollection.find({ from: userId }).toArray();
         console.log(userActiveTrades)
-        if(!user){ return {success: false, message: "Utente non trovato"}; }
+        if (!user) { return { success: false, message: "Utente non trovato" }; }
 
         let activeTradesMap = new Map();
-        userActiveTrades.forEach(el =>{
+        userActiveTrades.forEach(el => {
             el.for.forEach(card => {
                 activeTradesMap.set(card.id, activeTradesMap.has(card.id) ? activeTradesMap.get(card.id) + card.count : card.count)
             })
         })
 
 
-        for(const{id, count} of give){
-            const card = user.collection.find( c => c.id === id);
+        for (const { id, count } of give) {
+            const card = user.collection.find(c => c.id === id);
             const alreadyInTradeCount = activeTradesMap.has(id) ? activeTradesMap.get(id) : 0
-            if(!card || card.count - alreadyInTradeCount < 1 ){
-                return {success: false, message: "Non é possibile creare lo scambio"};
+            if (!card || card.count - alreadyInTradeCount < 1) {
+                return { success: false, message: "Non é possibile creare lo scambio" };
             }
         }
 
@@ -550,7 +585,7 @@ async function postTrade(userId, give, wants, client) {
 
         for (let key of giveMap.keys()) {
             if (wantsMap.has(key)) {
-                return {success: false, message: "Sono presenti carti uguali."};
+                return { success: false, message: "Sono presenti carti uguali." };
             }
         }
 
@@ -559,7 +594,7 @@ async function postTrade(userId, give, wants, client) {
             for: give,
             want: wants
         });
-        
+
         return { success: true, message: "Creazione dello scambio eseguita con successo" };
     } catch (error) {
         console.error("Errore durante l'esecuzione della creazione dello scambio:", error);
