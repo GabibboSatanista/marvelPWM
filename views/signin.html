@@ -14,7 +14,7 @@
 </head>
 
 <body class="d-flex align-items-center justify-content-center min-vh-100 py-4 ">
-  <main class="m-auto text-center col col-12 col-md-6 col-lg-4">
+  <main class="m-auto text-center col col-12 col-md-6 col-lg-3">
     <div class="form-signin p-4 rounded">
       <div class="alert alert-danger d-none" id="alert" role="alert"></div>
       <section class="pb-4">
@@ -187,9 +187,9 @@
     document.getElementById('fs').addEventListener('input', (event) => {
       const newValue = event.target.value;
       const dropdownFS = document.getElementById('dropdownFS');
-      while(dropdownFS.childElementCount > 0 ){
+      while (dropdownFS.childElementCount > 0) {
         dropdownFS.removeChild(dropdownFS.lastChild);
-    }
+      }
       clearTimeout(typingTimer);
       if (newValue !== '') {
         typingTimer = setTimeout(async () => {

@@ -82,6 +82,13 @@ async function postTrade() {
     }).then(response => response.text())
         .then(data => {
             console.log(data)
+            res = document.getElementById('resultOperationInsertTrade');
+            res.classList.remove('d-none')
+            setTimeout(function () {
+                res.classList.add('d-none');
+                window.location.href = '/index.html';
+            }, 10000);
+            res.innerText = data
         })
         .catch(error => console.error(error))
 }
@@ -102,14 +109,19 @@ function getUserId() {
 }
 
 async function getUserProfile(id_user) {
-    const resp = await fetch('http://localhost:8080/user', {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: id_user }),
-        redirect: "follow"
-    })
-    const data = await resp.json();
-    return data;
+    try {
+        const resp = await fetch('http://localhost:8080/user', {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id_user }),
+            redirect: "follow"
+        })
+        const data = await resp.json();
+        return data;
+    }catch(error){
+        console.log(error)
+        window.location.href= '/';
+    }
 }
 
 

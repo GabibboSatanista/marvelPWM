@@ -19,37 +19,45 @@
 
     <!--MAIN PAGE-->
     <div id="mainPage">
-        <header class="text-center shadow p-1">
+        <header class="text-center shadow p-2 mx-auto mx-auto col-12 col-md-6 col-lg-3">
             <h1 class="my-4">Profilo utente</h1>
         </header>
 
-        <main class="container pt-5 col-12 col-md-8 col-lg-4 " style="min-height: 80vh; max-width: 50vh">
+        <main class="container mt-3 pt-5 mx-auto col-12 col-md-6 col-lg-3" style="min-height: 80vh;">
             <div class="alert d-none" id="error_alert"></div>
             <!--AGGIUNGERE CAMPI PER LA GESTIONE UTENTE-->
             <div class="col-12">
-                <label class="d-block" for="inputName"><h1>Username</h1></label>
+                <label class="d-block" for="inputName">
+                    <h1>Username</h1>
+                </label>
                 <input class="w-100 fake-disabled" id="inputName" readonly></input>
             </div>
             <div class="col-12 mt-4">
-                <label class="d-block" for="inputEmail"><h1>Email</h1></label>
+                <label class="d-block" for="inputEmail">
+                    <h1>Email</h1>
+                </label>
                 <input class="w-100 fake-disabled" type="email" id="inputEmail" disabled></input>
             </div>
             <div class="col-12  mt-4">
-                <label class="d-block" for="inputPassword"><h1>Password</h1></label>
+                <label class="d-block" for="inputPassword">
+                    <h1>Password</h1>
+                </label>
                 <input class="w-100 fake-disabled" type="password" id="inputPassword" readonly></input>
             </div>
             <div class="col-12 mt-4">
                 <div class="dropdown">
-                    <label class="d-block" for="fs"><h1>Personaggio preferito</h1></label>
+                    <label class="d-block" for="fs">
+                        <h1>Personaggio preferito</h1>
+                    </label>
                     <input class="w-100 fake-disabled" id="fs" readonly></input>
                     <ul class="dropdown-menu w-100" id="dropdownFS">
-    
+
                     </ul>
-            </div>
-            <div class="col-12 d-flex flex-row justify-content-evenly  mt-4">
-                <button class="btn btn-primary" onclick="modify()">Modifica</button>
-                <button class="btn btn-secondary" onclick="window.location.reload(false);">Annulla</button>
-            </div>
+                </div>
+                <div class="col-12 d-flex flex-row justify-content-evenly  mt-4">
+                    <button class="btn btn-primary" onclick="modify()">Modifica</button>
+                    <button class="btn btn-secondary" onclick="window.location.reload(false);">Annulla</button>
+                </div>
         </main>
     </div>
 

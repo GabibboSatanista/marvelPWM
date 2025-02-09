@@ -23,7 +23,7 @@
         </header>
 
         <main class="container mt-3 col-12 col-md-8 col-lg-4" style="min-height: 80vh; max-width: 50vh;">
-            <div style="max-height: 80vh; overflow-y:scroll">
+            <div style="max-height: 80vh; overflow-y: scroll; scrollbar-width: none;">
                 <div class="card mb-3 d-none"
                     style="height: 100px; font-size: 1.5rem; color: white; border: none; overflow-y: hidden;">
                     <img class="card-img" style="filter: blur(5px);">
@@ -36,10 +36,12 @@
             </div>
         </main>
 
-        <div class="d-flex justify-content-end p-2" style="z-index: 100; position: absolute; top: 85%; right: 0%">
-            <button class="btn btn-primary" onclick="window.location.href='insert.html';">
-                <i class="bi bi-plus"></i>
-            </button>
+        <div class="d-flex justify-content-end p-2 w-100 justify-content-center" style="z-index: 100; position: absolute; top: 85%; right: 0%">
+            <div class="d-flex col-12 col-md-6 col-lg-4 justify-content-end">
+                <button class="btn btn-primary" onclick="window.location.href='insert.html';">
+                    <i class="bi bi-plus"></i>
+                </button>
+            </div>
         </div>
 
         <div class="offcanvas offcanvas-bottom mx-auto col-12 col-lg-6 rounded-top" tabindex="-1" id="offcanvas"
@@ -61,18 +63,18 @@
                         </ul>
                     </div>
                 </div> <!--SISTEMARE POSIZONE BUTTON-->
-                <div class="d-flex position-relative fixed-bottom p-2">
-                    <div class="d-flex w-100">
-                        <p class="w-100" id="resultTrade"></p>
-                    </div>
-                    <div class="d-flex justify-content-end w-100"><button
-                            class="btn btn-primary  acceptTradeButton">accetta</button></div>
+            </div>
+            <div class="d-flex p-2">
+                <div class="d-flex w-100">
+                    <p class="w-100" id="resultTrade"></p>
                 </div>
+                <div class="d-flex justify-content-end w-100"><button
+                        class="btn btn-primary  acceptTradeButton">accetta</button></div>
             </div>
         </div>
 
 
-        <footer class="fixed-bottom mx-auto col-12 col-lg-4">
+        <footer class="fixed-bottom">
             <div class="d-flex flex-row justify-content-evenly align-items-center nb">
                 <a id="home" onclick="window.location.href='index.html';"><i class="bi bi-x-lg"></i></a>
             </div>

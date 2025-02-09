@@ -54,7 +54,23 @@
   <script>
     const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&-_])[A-Za-z\d@$!%*?&-_]{8,}$/;
 
-    document.addEventListener('click', function(event) {
+    const id = getUserId()
+    console.log(id)
+    if(id !== null){
+      window.location.href = '/index.html';
+    }
+
+    function getUserId() {
+      if (sessionStorage.getItem('user_id')) {
+        return sessionStorage.getItem('user_id');
+      } else if (localStorage.getItem('user_id')) {
+        return localStorage.getItem('user_id');
+      }
+      console.error('Utente non loggato');
+      return null;
+    }
+
+    document.addEventListener('click', function (event) {
       const dropdown = document.querySelector('.dropdown');
       const dropdownMenu = dropdown.querySelector('.dropdown-menu');
 
@@ -81,7 +97,7 @@
       if (!regex.test(psw)) {
         return { success: false, message: 'Formato credenziali errato.' }
       }
-      
+
       try {
         const resp = await fetch("http://localhost:8080/login", {
           method: "POST",

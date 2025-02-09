@@ -16,10 +16,11 @@
 <body class="justify-content-center" style="background-color: #3a3838;">
 
     <!--MAIN PAGE-->
-    <div id="mainPage" >
-        <header class="d-flex flex-wrap mx-auto col-12 col-lg-4 align-items-center justify-content-center py-3">
-            <div class="d-flex justify-content-center position-relative start-50 translate-middle-x" id="mainProfileImage"><img
-                    class="img-thumbnail"></div>
+    <div id="mainPage">
+        <header
+            class="d-flex flex-wrap mx-auto col-12 col-md-6 col-lg-4 align-items-center justify-content-center py-3">
+            <div class="d-flex justify-content-center position-relative start-50 translate-middle-x"
+                id="mainProfileImage"><img class="img-thumbnail"></div>
 
             <div class="input-group mx-3 w-25 ms-auto">
                 <input class="form-control text-end" id="number_credits" type="text" value=""
@@ -30,7 +31,7 @@
 
         </header>
 
-        <main class="container pt-5 mx-auto col-12 col-lg-3" style="min-height: 80vh;">
+        <main class="container pt-5 mx-auto col-12 col-md-6 col-lg-3" style="min-height: 80vh;">
 
             <div class="spinner-border d-none position-absolute top-50 start-50" role="status">
                 <span class="visually-hidden">Loading...</span>
@@ -99,10 +100,10 @@
 
     <!--Collection page-->
     <div class="d-none" id="collectionPage">
-        <header class="text-center shadow p-1 mx-auto col-12 col-lg-4">
+        <header class="text-center shadow p-1 mx-auto col-12 col-md-6 col-lg-4">
             <h1 class="my-4">Collezione</h1>
         </header>
-        <main class="container mt-3 mb-5 mx-auto col-12 col-lg-4">
+        <main class="container mt-3 mb-5 mx-auto col-12 col-md-6 col-lg-4">
             <div class="spinner-border d-none position-absolute top-50 start-50" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
@@ -122,26 +123,26 @@
             </div>
         </main>
 
-        <div class="offcanvas offcanvas-bottom mx-auto col-12 col-lg-6" tabindex="-1" id="offcanvas" aria-labelledby="offcanvasLabel"
-            style="height: 90%;">
-            <div class="d-flex align-items-center"style="max-height: 500px; width: 100%; overflow: hidden;">
+        <div class="offcanvas offcanvas-bottom mx-auto col-12 col-md-8 col-lg-4" tabindex="-1" id="offcanvas"
+            aria-labelledby="offcanvasLabel" style="height: 90%;">
+            <div class="d-flex align-items-center" style="max-height: 500px; width: 100%; overflow: hidden;">
                 <img class="img-fluid w-100">
             </div>
             <div class="offcanvas-header">
                 <h1 class="offcanvas-title" id="offcanvasLabel">Offcanvas</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
-            <div class="offcanvas-body mx-2">
+            <div class="offcanvas-body mx-2" style="overflow-y:hidden; scrollbar-width: none;">
             </div>
         </div>
     </div>
 
     <!--Opening page-->
     <div class="d-none" id="openingPage">
-        <header class="text-center shadow p-1 mx-auto col-12 col-lg-4">
+        <header class="text-center shadow p-1 mx-auto col-12 col-md-6 col-lg-4">
             <h1 class="my-4">Carte Ottenute</h1>
         </header>
-        <main class="container mt-5 mb-5 mx-auto col-12 col-lg-4">
+        <main class="container mt-5 mb-5 mx-auto col-12 col-md-6 col-lg-4">
 
             <div class="spinner-border d-none position-absolute top-50 start-50" role="status">
                 <span class="visually-hidden">Loading...</span>
@@ -166,7 +167,7 @@
     </div>
 
     <footer class="fixed-bottom">
-        <div class="d-flex flex-row justify-content-evenly align-items-center nb mx-auto col-12 col-lg-4">
+        <div class="d-flex flex-row justify-content-evenly align-items-center nb mx-auto col-12 col-md-6 col-lg-4">
             <a id="home" onclick="loadMainPage()"><i class="bi bi-house-door-fill"></i></a>
             <a id="collection" onclick="loadCollectionPage()"><i class="bi bi-collection"></i></a>
             <a data-bs-toggle="offcanvas" href="#offcanvasOptions" role="button" aria-controls="offcanvasOptions"
@@ -188,8 +189,8 @@
             <!-- <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button> -->
         </div>
         <div class="offcanvas-body d-flex flex-column">
-            <a onclick="window.location.href='/shop.html'"><i class="bi bi-bag" style="font-size: 1.8rem;"></i> <span class="mx-2"
-                    style="font-size: 1.15rem;">Negozio</span></a>
+            <a onclick="window.location.href='/shop.html'"><i class="bi bi-bag" style="font-size: 1.8rem;"></i> <span
+                    class="mx-2" style="font-size: 1.15rem;">Negozio</span></a>
             <a href="#"><i class="bi bi-backpack2" style="font-size: 1.8rem;"></i> <span class="mx-2"
                     style="font-size: 1.15rem;">Oggetti</span></a>
             <hr>

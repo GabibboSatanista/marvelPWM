@@ -44,14 +44,19 @@ function getUserId() {
 }
 
 async function getUserProfile(id_user) {
-    const resp = await fetch('http://localhost:8080/user', {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: id_user }),
-        redirect: "follow"
-    })
-    const data = await resp.json();
-    return data;
+    try {
+        const resp = await fetch('http://localhost:8080/user', {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id_user }),
+            redirect: "follow"
+        })
+        const data = await resp.json();
+        return data;
+    }catch(error){
+        console.log(error)
+        window.location.href= '/';
+    }
 }
 
 document.addEventListener('click', function (event) {

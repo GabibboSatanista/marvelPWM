@@ -234,6 +234,11 @@ a:hover {
     cursor: pointer;
 }
 
+#mainTrade main .card{
+    transition: transform 0.1s ease-in-out;
+    cursor: pointer;
+}
+
 /* Per schermi ancora più grandi */
 @media (min-width: 1024px) {
     #collectionPage main .card,
@@ -252,6 +257,28 @@ a:hover {
 #collectionPage main .card:hover,
 #collectionPage main .card:active,
 #offerCardsPage main .card:hover,
-#offerCardsPage main .card:active {
+#offerCardsPage main .card:active,
+#mainTrade main .card:hover,
+#mainTrade main .card:active {
     transform: scale(1.1);
+}
+
+body::-webkit-scrollbar {
+    display: none; /* Nasconde la scrollbar su Chrome, Safari e Edge */
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  display: none;
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"]:hover::-webkit-inner-spin-button,
+input[type="number"]:hover::-webkit-outer-spin-button {
+  display: none;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield; /* Nasconde freccette su Firefox */
 }

@@ -18,17 +18,17 @@
 
     <!--offerCardsPage-->
     <div id="offerCardsPage" class="d-none p-1">
-        <header class="text-center shadow p-2">
+        <header class="text-center shadow p-2 mx-auto col-12 col-md-6 col-lg-4">
             <h1 class="my-4">Offri</h1>
         </header>
 
-        <main class="container mt-3 mb-1">
+        <main class="container mt-3 mb-5 mx-auto col-12 col-md-6 col-lg-4">
             <!--<div class="spinner-border d-none position-absolute top-50 start-50" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>-->
             <div class="row justify-content-center mb-3" id="card_collection"
-                style="max-height: 80vh; overflow-y: scroll">
-                <div class="col-4 col-md-4 col-lg-3 mb-3 d-none">
+                style="max-height: 80vh; overflow-y: scroll; scrollbar-width: none;">
+                <div class="col-4 col-md-4 col-lg-4 mb-3 mt-2 d-none">
                     <div class="card text-bg-dark">
                         <img class="card-img img-fluid cover-img" alt="...">
                         <div class="card-img-overlay h-100 w-100">
@@ -41,25 +41,23 @@
                     </div>
                 </div>
             </div>
-
         </main>
 
-        <div class="d-flex w-100 justify-content-center" style="z-index: 100; position: fixed; bottom: 7%;">
-            <button class="btn btn-primary w-50" onclick="pageActivator('receive', true)">
+        <div class="d-flex w-100 justify-content-center " style="z-index: 100; position: fixed; bottom: 7%;">
+            <button class="btn btn-primary w-50" onclick="pageActivator('receive', true)" style="max-width: 300px;">
                 Avanti
             </button>
         </div>
 
-        <div class="offcanvas offcanvas-bottom" tabindex="-1" id="offcanvas" aria-labelledby="offcanvasLabel"
-            style="height: 60%;">
-            <div class="" style="min-height: 65% ; overflow-y: hidden;">
+        <div class="offcanvas offcanvas-bottom mx-auto col-12 col-md-8 col-lg-4" tabindex="-1" id="offcanvas" aria-labelledby="offcanvasLabel" style="height: 60%;">
+            <div class="w-100" style="min-height: 65% ; overflow-y: hidden; scrollbar-width: none;">
                 <img class="img-fluid">
             </div>
             <div class="offcanvas-header">
                 <h1 class="offcanvas-title" id="offcanvasLabel"></h1>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
-            <div class="offcanvas-body">
+            <div class="offcanvas-body" style="overflow-y: hidden; scrollbar-width: none;">
                 <div class="d-flex flex-row mb-3">
                     <div class="form-group w-100 mx-1">
                         <div class="input-group input-number">
@@ -79,17 +77,12 @@
     </div>
 
 
-
-
-
-
-
     <div id="receiveCardsPage" class="d-none p-1">
-        <header class="text-center shadow p-2">
+        <header class="text-center shadow p-2 mx-auto col-12 col-md-6 col-lg-4">
             <h1 class="my-4">Ricevi</h1>
         </header>
 
-        <main class="container mt-3 mb-5 pt-3">
+        <main class="container mt-3 mb-5 pt-3 mx-auto col-12 col-md-6 col-lg-4">
             <!--<div class="spinner-border d-none position-absolute top-50 start-50" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>-->
@@ -118,7 +111,7 @@
             </div>
             <hr>
 
-            <div style="max-height: 80vh; overflow-y:scroll">
+            <div style="max-height: 80vh; overflow-y:scroll; scrollbar-width: none;">
                 <table class="table table-dark">
                     <thead>
                       <tr>
@@ -135,10 +128,13 @@
             </div>
         </main>
 
-        <div class="d-flex w-100 justify-content-center p-2" style="z-index: 100; position: fixed; bottom: 7%;">
-            <button class="btn btn-primary w-50" onclick="postTrade()">
-                Conferma
-            </button>
+        <div class="d-flex w-100 justify-content-center align-items-end text-center p-0" style="z-index: 100; position: fixed; bottom: 7%;">
+            <div class="d-flex flex-column w-100" style="max-width: 300px;">
+                <span class="d-none" id="resultOperationInsertTrade"></span>
+                <button class="btn btn-primary w-100" onclick="postTrade()">
+                    Conferma
+                </button>
+            </div>
         </div>
     </div>
 
