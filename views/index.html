@@ -13,7 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
 </head>
 
-<body class="justify-content-center" style="background-color: #3a3838;">
+<body class="justify-content-center" style="">
 
     <!--MAIN PAGE-->
     <div id="mainPage">
@@ -31,8 +31,8 @@
 
         </header>
 
-        <main class="container pt-5 mx-auto col-12 col-md-6 col-lg-3" style="min-height: 80vh;">
 
+        <main class="container pt-5 mx-auto col-12 col-md-6 col-lg-3" style="min-height: 83vh;">
             <div class="spinner-border d-none position-absolute top-50 start-50" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
@@ -107,7 +107,9 @@
             <div class="spinner-border d-none position-absolute top-50 start-50" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
-            <div class="row justify-content-center mb-3" id="card_collection">
+
+            <div class="row justify-content-center mb-3" id="card_collection" style="max-height: 83vh; overflow-y: scroll; scrollbar-width: none;">
+
                 <div class="col-4 col-md-4 col-lg-4 mb-3 d-none">
                     <div class="card text-bg-dark mx-auto">
                         <img class="card-img img-fluid cover-img" alt="...">
@@ -120,6 +122,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </main>
 
@@ -148,7 +151,7 @@
                 <span class="visually-hidden">Loading...</span>
             </div>
 
-            <div class="row justify-content-center" id="packCards">
+            <div class="row justify-content-center" id="packCards" style="max-height: 80vh; overflow-y: scroll; scrollbar-width: none;">
                 <div class="col-12 mb-3 d-none">
                     <div class="card text-bg-dark">
                         <img class="card-img img-fluid cover-img" alt="...">
@@ -199,6 +202,7 @@
             <a href="#"><i class="bi bi-info-circle" style="font-size: 1.5rem"></i><span class="mx-3">Info</span></a>
             <a href="#"><i class="bi bi-gear" style="font-size: 1.5rem"></i><span class="mx-3">Settings</span></a>
             <hr>
+            <button class="btn btn-primary" onclick="logout()">Logout</button>
         </div>
     </div>
 

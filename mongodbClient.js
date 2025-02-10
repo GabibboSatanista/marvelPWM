@@ -35,7 +35,6 @@ function startMongoDBConnection() {
     const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
     require("dotenv").config();
     const mongo_db_url = process.env.mongo_db_url;
-    // Create a MongoClient with a MongoClientOptions object to set the Stable API version
     const client = new MongoClient(mongo_db_url, {
         serverApi: {
             version: ServerApiVersion.v1,
@@ -140,7 +139,6 @@ async function changePassword(id, newPsw, client) {
     try {
         collection = await connectingToTestServer(client, dbName, collectionName);
         const objectId = new ObjectId(id);
-        // Trova l'utente nel database
         const user = await collection.findOne({ _id: objectId });
 
         if (!user) {
@@ -173,12 +171,9 @@ async function changeUsername(id, newUsr, client) {
     const { ObjectId } = require('mongodb');
     try {
         collection = await connectingToTestServer(client, dbName, collectionName);
-
-        //check username giá esistente
         if (await doesUsernameExist(collection, newUsr)) return { success: false, message: "Nome utente giá esistente." }
 
         const objectId = new ObjectId(id);
-        // Trova l'utente nel database
         const user = await collection.findOne({ _id: objectId });
 
         if (!user) {
@@ -211,7 +206,6 @@ async function changeFavouteSuperhero(id, fs, client) {
     try {
         collection = await connectingToTestServer(client, dbName, collectionName);
         const objectId = new ObjectId(id);
-        // Trova l'utente nel database
         const user = await collection.findOne({ _id: objectId });
 
         if (!user) {
@@ -246,13 +240,10 @@ async function removeCredits(id, credits_to_remove, client) {
         const objectId = new ObjectId(id);
         console.log(id);
         const usr = await collection.findOne({ _id: objectId });
-
-        // Se l'utente non esiste, restituisci un errore
         if (!usr) {
             return { success: false, message: "Utente non trovato." };
         }
 
-        // Verifica che il campo credits esista e sia un numero
         const credits = usr.credits;
         if (credits === undefined || credits === null) {
             return { success: false, message: "I crediti dell'utente non sono stati trovati." };
@@ -287,12 +278,12 @@ async function addCredits(id, credits_to_add, client) {
         console.log(id);
         const usr = await collection.findOne({ _id: objectId });
 
-        // Se l'utente non esiste, restituisci un errore
+        
         if (!usr) {
             return { success: false, message: "Utente non trovato." };
         }
 
-        // Verifica che il campo credits esista e sia un numero
+        
         const credits = usr.credits;
         if (credits === undefined || credits === null) {
             return { success: false, message: "I crediti dell'utente non sono stati trovati." };
@@ -326,7 +317,6 @@ async function addCardsToUser(userId, newCards, client) {
         const objectId = new ObjectId(userId);
         const usr = await collection.findOne({ _id: objectId });
 
-        // Se l'utente non esiste, restituisci un errore
         if (!usr) { return { success: false, message: "Utente non trovato." }; }
 
         const cards = usr.collection;
@@ -335,7 +325,6 @@ async function addCardsToUser(userId, newCards, client) {
             let id = el.id;
             let card = cards.find(card => card.id === id);
             if (card) {
-                // Incrementa il valore di count di 1
                 card.count = (parseInt(card.count) + 1).toString();
             } else {
                 cards.push({ id: id, count: 1 })
@@ -363,23 +352,21 @@ async function addCardsToUser(userId, newCards, client) {
 
 async function doesUsernameExist(collection, username) {
     try {
-        // Usa findOne per cercare il nome utente
         const exists = await collection.findOne({ username: username });
-        return exists ? true : false; // Ritorna true se esiste, false altrimenti
+        return exists ? true : false; 
     } catch (error) {
         console.error("Errore durante il controllo del nome utente:", error);
-        return false; // Considera false in caso di errore per sicurezza
+        return false; 
     }
 }
 
 async function doesEmailExist(collection, email) {
     try {
-        // Usa findOne per cercare il email utente
         const exists = await collection.findOne({ email: email });
-        return exists ? true : false; // Ritorna true se esiste, false altrimenti
+        return exists ? true : false; 
     } catch (error) {
         console.error(error);
-        return false; // Considera false in caso di errore per sicurezza
+        return false; 
     }
 }
 
@@ -394,7 +381,6 @@ async function getActiveTrade(userId, limit, offset, client) {
         const objectId = new ObjectId(userId);
         const trades = await collection.find({ from: { $ne: objectId } }).skip(parseInt(offset, 10)).limit(parseInt(limit, 10)).toArray();
 
-        // Se trade non esiste, restituisci un errore
         if (!trades) { return { success: false, message: "Nessuno scambio disponibile" } };
         return { success: true, message: trades };
     } catch (error) {
@@ -413,25 +399,20 @@ async function makeTrade(tradeId, userId, client) {
     const { ObjectId } = require("mongodb");
 
     try {
-        // Ottieni la collezione degli scambi
         const tradesCollection = await connectingToTestServer(client, dbName, collectionTrades);
         const trade = await tradesCollection.findOne({ _id: new ObjectId(tradeId) });
 
-        // Controlla se lo scambio esiste
         if (!trade) {
             return { success: false, message: "Nessuno scambio disponibile" };
         }
 
-        // Ottieni la collezione degli utenti
         const usersCollection = client.db(dbName).collection(collectionUsers);
 
-        // Controlla se il trade può essere eseguito
         const tradeCanBeMade = await validateTrade(usersCollection, trade, userId);
         if (!tradeCanBeMade) {
             return { success: false, message: "Non è possibile effettuare lo scambio" };
         }
 
-        // Esegui le operazioni di trade: trasferisci carte tra i due utenti
         await executeTrade(usersCollection, trade, userId);
         tradesCollection.deleteOne({_id: new ObjectId(tradeId)})
         return { success: true, message: "Scambio eseguito con successo" };
@@ -452,12 +433,11 @@ async function validateTrade(usersCollection, trade, userId) {
         throw new Error("Utente non trovato");
     }
 
-    // Controlla se `fromUser` ha abbastanza carte da offrire
     for (const { id, count } of trade.for) {
         if (id !== '#credits') {
             const card = fromUser.collection.find(item => item.id === id);
             if (!card || card.count == 1 || card.count < count) {
-                return false; // `fromUser` non ha abbastanza carte
+                return false; 
             }
         } else {
             if (fromUser.credits < count) {
@@ -466,12 +446,11 @@ async function validateTrade(usersCollection, trade, userId) {
         }
     }
 
-    // Controlla se `toUser` ha abbastanza carte richieste
     for (const { id, count } of trade.want) {
         if (id !== '#credits') {
             const card = toUser.collection.find(item => item.id === id);
             if (!card || card.count == 1 || card.count < count) {
-                return false; // `fromUser` non ha abbastanza carte
+                return false;
             }
         } else {
             if (toUser.credits < count) {
@@ -484,7 +463,6 @@ async function validateTrade(usersCollection, trade, userId) {
 }
 
 async function executeTrade(usersCollection, trade, userId) {
-    // Sottrai le carte dal `fromUser` e aggiungile al `toUser`
     const { ObjectId } = require("mongodb");
     for (const { id, count } of trade.for) {
         if (id !== "#credits") {
@@ -516,7 +494,6 @@ async function executeTrade(usersCollection, trade, userId) {
         }
     }
 
-    // Sottrai le carte dal `toUser` e aggiungile al `fromUser`
     for (const { id, count } of trade.want) {
         if (id !== "#credits") {
             await usersCollection.updateOne(
@@ -601,91 +578,3 @@ async function postTrade(userId, give, wants, client) {
         return { success: false, message: error.message };
     }
 }
-
-//----------------------------------------------------------
-//ARTICOLI
-/*
-async function getArticoli(client, genere, tipo_articolo) {
-    require("dotenv").config();
-    const dbName = process.env.db_name;
-    const collectionName = process.env.collection_catalogue;
-    try {
-        collection = await connectingToTestServer(client, dbName, collectionName);
-        filtro = {}
-        if (genere !== undefined && genere !== 'n') { filtro.genere = genere }
-        if (tipo_articolo !== undefined && tipo_articolo !== 'n') { filtro.tipo_articolo = tipo_articolo }
-        return await collection.find(filtro).toArray();
-    } catch (error) {
-        console.log(error);
-        return false;
-    } finally {
-        await closeClientConnection(client);
-    }
-}
-
-async function getArticoliByDataDecrescente(client, genere, limit) {
-    require("dotenv").config();
-    const dbName = process.env.db_name;
-    const collectionName = process.env.collection_catalogue;
-    try {
-        collection = await connectingToTestServer(client, dbName, collectionName);
-        const filter = genere ? { genere: genere } : {};
-        const results = await collection.find(filter)
-            .sort({ data: -1 }) // Ordina per data decrescente
-            .limit(limit)           // Limita i risultati a 5 documenti
-            .toArray();
-
-        return results;
-    } catch (error) {
-        console.log(error);
-        return false;
-    } finally {
-        await closeClientConnection(client);
-    }
-}
-
-async function postArticoli(client, body) {
-    require("dotenv").config();
-    const dbName = process.env.db_name;
-    const collectionName = process.env.collection_catalogue;
-
-    try {
-        collection = await connectingToTestServer(client, dbName, collectionName);
-
-        const words = body.split('+');
-
-        const filteredWords = words.filter(word => word.length > 3);
-
-
-        const regexArray = filteredWords.map(word => {
-            return { descrizione: { $regex: word, $options: 'i' } };
-        });
-
-
-        const filter = { $or: regexArray };
-
-        return await collection.find(filter).toArray();
-    } catch (error) {
-        console.log(error);
-        return false;
-    } finally {
-        await closeClientConnection(client);
-    }
-}
-
-async function getArticoloById(client, id){
-    const { ObjectId } = require('mongodb');
-    require("dotenv").config();
-    const dbName = process.env.db_name;
-    const collectionName = process.env.collection_catalogue;
-    try{
-        collection = await connectingToTestServer(client, dbName, collectionName);
-        return await collection.findOne({_id: new ObjectId(id)});
-    }catch(error){
-        console.log(error);
-        return undefined;
-    }finally{
-        await closeClientConnection(client);
-    }
-}
-    */

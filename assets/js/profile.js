@@ -4,7 +4,6 @@ const debounceTime = 2000;
 loadUserData();
 
 async function loadUserData() {
-    // Seleziona tutti gli input con la classe .fake-disabled
     const inputs = document.querySelectorAll('.fake-disabled');
     const userData = await getUserProfile(getUserId());
     const fs = await getDataMarvelById(userData.favourite_superhero);
@@ -24,7 +23,6 @@ async function loadUserData() {
                 break;
         }
         input.addEventListener('dblclick', () => {
-            // Rimuove la classe .fake-disabled per attivare l'input
             input.classList.remove('fake-disabled');
             input.classList.add('active');
             input.removeAttribute('readonly')
@@ -63,9 +61,9 @@ document.addEventListener('click', function (event) {
     const dropdown = document.querySelector('.dropdown');
     const dropdownMenu = dropdown.querySelector('.dropdown-menu');
 
-    // Check if the click happened outside the dropdown
+
     if (!dropdown.contains(event.target)) {
-        dropdownMenu.classList.remove('show'); // Close the dropdown
+        dropdownMenu.classList.remove('show'); 
     }
 });
 

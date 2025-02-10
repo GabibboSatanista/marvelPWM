@@ -1,6 +1,6 @@
 :root {
     --bg-color: #1f1e1e;
-    --bg-color-secondary: #3a3838;
+    --bg-color-secondary: rgb(58, 56, 56);
     --primary-color: #bd1c1c;
     --secondary-color: #7c1111;
     --t-color: #e0dede;
@@ -17,15 +17,32 @@ hr {
 
 
 body {
-    background-color: var(--bg-color);
+    position: relative;
+    background-color: var(--bg-color-secondary);
     color: var(--t-color);
     font-family: 'Orbitron', sans-serif;
+    height: 100vh;
 }
 
+body::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url(/assets/images/marvelBackgroundImage.png) no-repeat center center/cover;
+    filter: grayscale(100%);
+    z-index: -1;
+    opacity: 0.1; /* Regola la trasparenza */
+}
+
+/*
 header,
 main {
-    background-color: var(--bg-color-secondary);
+    background-color: rgba(58, 56, 56, 0.7);
 }
+*/
 
 footer {
     z-index: 1030;
@@ -227,29 +244,32 @@ a:hover {
 
 #collectionPage main .card,
 #offerCardsPage main .card {
-    width: 130px;
+    width: 110px;
     height: 150px;
     overflow: hidden;
     transition: transform 0.1s ease-in-out;
     cursor: pointer;
 }
 
-#mainTrade main .card{
+#mainTrade main .card {
     transition: transform 0.1s ease-in-out;
     cursor: pointer;
 }
 
 /* Per schermi ancora più grandi */
 @media (min-width: 1024px) {
+
     #collectionPage main .card,
     #offerCardsPage main .card {
         width: 180px;
         height: 200px;
     }
-    #collectionPage .offcanvas-header{
+
+    #collectionPage .offcanvas-header {
         font-size: 1.7rem;
     }
-    #collectionPage .offcanvas-body{
+
+    #collectionPage .offcanvas-body {
         font-size: 1.3rem;
     }
 }
@@ -264,21 +284,23 @@ a:hover {
 }
 
 body::-webkit-scrollbar {
-    display: none; /* Nasconde la scrollbar su Chrome, Safari e Edge */
+    display: none;
+    /* Nasconde la scrollbar su Chrome, Safari e Edge */
 }
 
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
-  display: none;
-  -webkit-appearance: none;
-  margin: 0;
+    display: none;
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 input[type="number"]:hover::-webkit-inner-spin-button,
 input[type="number"]:hover::-webkit-outer-spin-button {
-  display: none;
+    display: none;
 }
 
 input[type="number"] {
-  -moz-appearance: textfield; /* Nasconde freccette su Firefox */
+    -moz-appearance: textfield;
+    /* Nasconde freccette su Firefox */
 }

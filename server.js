@@ -56,8 +56,12 @@ app.get('/insert.html', (req, res) => {
     res.sendFile(path.join(__dirname, '/views/insert.html'));
 });
 
+app.get('/assets/images/marvelBackgroundImage.png', (req,res)=>{
+    res.sendFile(path.join(__dirname, '/assets/images/marvelBackgroundImage.png'))
+})
 
 //----------------------------------------------------------------------------
+
 app.post("/login", (req, res) => {
     utils.loginAuth(res, req.body);
 })
@@ -66,7 +70,6 @@ app.post("/register", function (req, res) {
     utils.addUser(res, req.body);
 })
 
-//SISTEMARE POI
 app.post("/user", function (req, res) {
     let id = req.body.id;
     utils.getUser(res, id);

@@ -136,18 +136,18 @@ async function getCharacterById(res, characterId) {
     const url = `https://gateway.marvel.com/v1/public/characters/${characterId}?ts=${timestamp}&apikey=${publicKey}&hash=${hash}`;
     console.log(url)
     try {
-        // Fetch the data
+
         const response = await fetch(url);
 
-        // Check if the response is ok
+
         if (!response.ok) {
             throw new Error(`HTTP Error: ${response.status}`);
         }
 
-        // Parse the response
+
         const data = await response.json();
         
-        // Check if the response contains a successful status code
+
         if (data.code === 200) {
             const character = data.data.results[0];
             const essentials = {
@@ -166,7 +166,7 @@ async function getCharacterById(res, characterId) {
         }
 
     } catch (error) {
-        // Catch any error during the request or processing
+
         console.error('Error fetching character data:', error);
         res.status(500).send('Internal server error');
     }
@@ -296,28 +296,26 @@ async function getActiveTrade(res, userId, limit, offset) {
             res.status(404).send(r.message);
             return;
         } else {
-            // Usa 'for...of' per aspettare che tutte le operazioni asincrone siano completate
+            
             for (const el of r.message) {
-                const user = await getUserInner(el.from); // Ottieni l'utente
+                const user = await getUserInner(el.from); 
                 el.username = user.username;
-                const fs = await getCharacterByIdInner(user.favourite_superhero); // Ottieni l'immagine
+                const fs = await getCharacterByIdInner(user.favourite_superhero); 
                 el.favourite_superhero_image = fs.thumbnail.url;
                 for (const character of el.for) {
                     if(character.id !== '#credits'){
-                        const c = await getCharacterByIdInner(character.id); // Ottieni l'immagine
+                        const c = await getCharacterByIdInner(character.id); 
                         character.name = c.name;
                     }
                 }
                 for (const character of el.want) {
                     if(character.id !== '#credits'){
-                        const c = await getCharacterByIdInner(character.id); // Ottieni l'immagine
+                        const c = await getCharacterByIdInner(character.id);
                         character.name = c.name;
                     }
                 }
             }
 
-
-            // Rispondi solo dopo che tutte le operazioni asincrone sono terminate
             res.status(200).send(r.message);
         }
     } catch (error) {
@@ -373,17 +371,13 @@ async function getCharacterByIdInner(characterId) {
     const url = `https://gateway.marvel.com/v1/public/characters/${characterId}?ts=${timestamp}&apikey=${publicKey}&hash=${hash}`;
     
     try {
-        // Fetch the data
         const response = await fetch(url);
-        
-        // Check if the response is ok
+
         if (!response.ok) {
             throw new Error(`HTTP Error: ${response.status}`);
         }
 
-        // Parse the response
         const data = await response.json();
-        // Check if the response contains a successful status code
         if (data.code === 200) {
             const character = data.data.results[0];
 
@@ -403,7 +397,6 @@ async function getCharacterByIdInner(characterId) {
         }
 
     } catch (error) {
-        // Catch any error during the request or processing
         console.error('Error fetching character data:', error);
     }
 }

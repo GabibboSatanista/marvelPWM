@@ -72,7 +72,6 @@ function pageActivator(page, callFunction) {
     }
 }
 
-//FARE CHECK
 async function postTrade() {
     await fetch('http://localhost:8080/trades/create', {
         method: "POST",
@@ -93,7 +92,6 @@ async function postTrade() {
         .catch(error => console.error(error))
 }
 
-//MODIFICARE con loadOfferCardsPage()
 document.addEventListener('DOMContentLoaded', async function () {
     await loadOfferCardsPage();
 });
@@ -136,8 +134,6 @@ async function loadOfferCardsPage() {
     history.pushState('offer', '', '#offer');
     userData = await getUserProfile(getUserId());
     const offcanvas = document.getElementById('offcanvas');
-    //activateSpinner(offerCardsPage);
-    // Creazione di un array di promesse
 
     userData.collection.map(el => {
         if (el.count > 1) {
@@ -149,14 +145,11 @@ async function loadOfferCardsPage() {
             clone.classList.remove('d-none');
             clone.addEventListener('click', function (event) {
                 event.preventDefault();
-                // let ct = event.currentTarget;
                 const offcanvasInstance = new bootstrap.Offcanvas(offcanvas);
                 let img = offcanvas.getElementsByClassName('img-fluid')[0];
                 img.src = el.url;
                 let title = offcanvas.getElementsByClassName('offcanvas-title')[0];
                 title.innerText = el.name;
-                //let body = offcanvas.getElementsByClassName('offcanvas-body')[0];
-                //body.innerText = el.description;
                 inputNumber.max = el.count - 1
                 if (offeredCards.has(el.id)) {
                     inputNumber.value = offeredCards.get(el.id)
@@ -179,11 +172,8 @@ async function loadOfferCardsPage() {
             });
             toClone.after(clone);
         }
-        //}
     });
 
-    //deactivateSpinner(offerCardsPage);
-    // Rimuovi la classe 'd-none' dopo che tutto è completato
     card_collection.classList.remove('d-none');
 }
 
@@ -273,9 +263,8 @@ document.addEventListener('click', function (event) {
     const dropdown = document.querySelector('.dropdown');
     const dropdownMenu = dropdown.querySelector('.dropdown-menu');
 
-    // Check if the click happened outside the dropdown
     if (!dropdown.contains(event.target)) {
-        dropdownMenu.classList.remove('show'); // Close the dropdown
+        dropdownMenu.classList.remove('show'); 
     }
 });
 

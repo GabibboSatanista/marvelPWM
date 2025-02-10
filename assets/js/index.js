@@ -36,24 +36,22 @@ function getUserId() {
     } else if (localStorage.getItem('user_id')) {
         return localStorage.getItem('user_id');
     }
+    
     console.error('Utente non loggato');
+    window.location.href = '/';
     return null;
 }
 
 async function getUserProfile(id_user) {
-    try {
-        const resp = await fetch('http://localhost:8080/user', {
-            method: "POST",
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: id_user }),
-            redirect: "follow"
-        })
-        const data = await resp.json();
-        return data;
-    }catch(error){
-        console.log(error)
-        window.location.href= '/';
-    }
+    const resp = await fetch('http://localhost:8080/user', {
+        method: "POST",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: id_user }),
+        redirect: "follow"
+    })
+    const data = await resp.json();
+    console.log(data)
+    return data;
 }
 
 
@@ -198,7 +196,6 @@ async function loadCollectionPage() {
     });
 
     deactivateSpinner(collectionPage);
-    // Rimuovi la classe 'd-none' dopo che tutto è completato
     card_collection.classList.remove('d-none');
 }
 
@@ -287,4 +284,14 @@ function activateSpinner(doc) {
 function deactivateSpinner(doc) {
     let spinner = doc.getElementsByClassName('spinner-border')[0];
     spinner.classList.add('d-none');
+}
+
+
+function logout(){
+    if (sessionStorage.getItem('user_id')) {
+        sessionStorage.removeItem('user_id');
+    } else if (localStorage.getItem('user_id')) {
+        return localStorage.removeItem('user_id');
+    }
+    window.location.href = '/';
 }
