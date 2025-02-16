@@ -151,6 +151,7 @@ async function modify() {
     let error_flag = false;
     inputs.forEach(async input => {
         if(!error_flag && input.classList.contains('active') && (input.value !== '' || input.getAttribute('placeholder') !== '')){
+            input.classList.remove('active')
             switch (input.id) {
                 case "inputName":
                     await fetch('http://localhost:8080/user/changeUsername', {
@@ -196,7 +197,7 @@ async function modify() {
             setInterval(function(){
                 alert.classList.remove('alert-danger')
                 alert.classList.add('d-none')
-            }, 2000);
+            }, 4000);
         }else{
             alert.innerText = 'Aggiornamento avvenuto con successo';
             alert.classList.add('alert-success');
@@ -204,7 +205,7 @@ async function modify() {
             setInterval(function(){
                 alert.classList.remove('alert-success')
                 alert.classList.add('d-none')
-            }, 2000);
+            }, 4000);
         }
 
     });
