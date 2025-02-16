@@ -55,7 +55,7 @@ async function loadActiveTrades() {
                     wantsCards.replaceChildren()
                     trade.want.forEach(el => {
                         const li = document.createElement('li');
-                        li.innerText = el.name ? el.name : (el.id == "#credits" ? "credits" : el.id)  + " x" + el.count;
+                        li.innerText = el.name ? el.name + " x" + el.count : (el.id == "#credits" ? "credits" : el.id)  + " x" + el.count;
                         wantsCards.appendChild(li);
                     })
 
