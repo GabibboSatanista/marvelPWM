@@ -44,7 +44,7 @@ function getUserId() {
 
 async function getUserProfile(id_user) {
     try {
-        const resp = await fetch('http://localhost:8080/user', {
+        const resp = await fetch('https://marvelpwm.onrender.com/user', {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: id_user }),
@@ -208,12 +208,12 @@ async function loadCollectionPage() {
 
 
 async function getImageMarvelById(id) {
-    let r = await fetch('http://localhost:8080/characters/' + id).then(resp => resp.json()).then(data => { return data.thumbnail.url; });
+    let r = await fetch('https://marvelpwm.onrender.com/characters/' + id).then(resp => resp.json()).then(data => { return data.thumbnail.url; });
     return r;
 }
 
 async function getDataMarvelById(id) {
-    let r = await fetch('http://localhost:8080/characters/' + id).then(resp => resp.json()).then(data => { return data; });
+    let r = await fetch('https://marvelpwm.onrender.com/characters/' + id).then(resp => resp.json()).then(data => { return data; });
     return r;
 }
 
@@ -232,7 +232,7 @@ async function openPack() {
     while (packCards.childElementCount > 1) {
         packCards.removeChild(packCards.lastChild);
     }
-    fetch('http://localhost:8080/pack/open', {
+    fetch('https://marvelpwm.onrender.com/pack/open', {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: user_id }),

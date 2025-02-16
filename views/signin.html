@@ -104,7 +104,7 @@
       }
 
       try {
-        const resp = await fetch("http://localhost:8080/register", {
+        const resp = await fetch("https://marvelpwm.onrender.com/register", {
           method: "POST",
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ "email": email, "password": psw, "username": username, "favourite_superhero": fs }),
@@ -198,7 +198,7 @@
       clearTimeout(typingTimer);
       if (newValue !== '') {
         typingTimer = setTimeout(async () => {
-          await fetch(`http://localhost:8080/characters/search/${newValue}`, {
+          await fetch(`https://marvelpwm.onrender.com/characters/search/${newValue}`, {
             method: "GET",
             headers: { 'Content-Type': 'application/json' },
             redirect: "follow"

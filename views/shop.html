@@ -61,7 +61,7 @@
 
             if (shopCredits) {
                 shopCredits.addEventListener('click', async function () {
-                    await fetch('http://localhost:8080/credits/add/4', {
+                    await fetch('https://marvelpwm.onrender.com/credits/add/4', {
                         method: "POST",
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ id: user_id }),

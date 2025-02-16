@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 
 
 async function loadActiveTrades() {
-    await fetch(`http://localhost:8080/trades/active`, {
+    await fetch(`https://marvelpwm.onrender.com/trades/active`, {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: getUserId(), limit: 100, offset: 0 }),
@@ -74,7 +74,7 @@ const acceptButton = document.getElementsByClassName('acceptTradeButton')[0]
 acceptButton.addEventListener('click', async function (event) {
     event.preventDefault()
     id_trade = event.currentTarget.id.split("id-")[1]
-    await fetch('http://localhost:8080/trades', {
+    await fetch('https://marvelpwm.onrender.com/trades', {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ tradeId: id_trade, userId: getUserId() }),

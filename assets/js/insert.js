@@ -73,7 +73,7 @@ function pageActivator(page, callFunction) {
 }
 
 async function postTrade() {
-    await fetch('http://localhost:8080/trades/create', {
+    await fetch('https://marvelpwm.onrender.com/trades/create', {
         method: "POST",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ userId: getUserId(), give: Array.from(offeredCards, ([id,count]) => ({id, count})), wants: Array.from(wantedCards, ([id,count]) => ({id, count})) }),
@@ -108,7 +108,7 @@ function getUserId() {
 
 async function getUserProfile(id_user) {
     try {
-        const resp = await fetch('http://localhost:8080/user', {
+        const resp = await fetch('https://marvelpwm.onrender.com/user', {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: id_user }),
@@ -124,7 +124,7 @@ async function getUserProfile(id_user) {
 
 async function getPersonalActiveTrade(id_user){
     try {
-        const resp = await fetch('http://localhost:8080/trades/personal', {
+        const resp = await fetch('https://marvelpwm.onrender.com/trades/personal', {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId: id_user, limit: "100", offset: "0" }),
@@ -220,7 +220,7 @@ document.getElementById('fs').addEventListener('input', (event) => {
     clearTimeout(typingTimer);
     if (!newValue.includes('#')) {
         typingTimer = setTimeout(async () => {
-            await fetch(`http://localhost:8080/characters/search/${newValue}`, {
+            await fetch(`https://marvelpwm.onrender.com/characters/search/${newValue}`, {
                 method: "GET",
                 headers: { 'Content-Type': 'application/json' },
                 redirect: "follow"
@@ -294,12 +294,12 @@ document.addEventListener('click', function (event) {
 });
 
 async function getImageMarvelById(id) {
-    let r = await fetch('http://localhost:8080/characters/' + id).then(resp => resp.json()).then(data => { return data.thumbnail.url; });
+    let r = await fetch('https://marvelpwm.onrender.com/characters/' + id).then(resp => resp.json()).then(data => { return data.thumbnail.url; });
     return r;
 }
 
 async function getDataMarvelById(id) {
-    let r = await fetch('http://localhost:8080/characters/' + id).then(resp => resp.json()).then(data => { return data; });
+    let r = await fetch('https://marvelpwm.onrender.com/characters/' + id).then(resp => resp.json()).then(data => { return data; });
     return r;
 }
 

@@ -43,7 +43,7 @@ function getUserId() {
 
 async function getUserProfile(id_user) {
     try {
-        const resp = await fetch('http://localhost:8080/user', {
+        const resp = await fetch('https://marvelpwm.onrender.com/user', {
             method: "POST",
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id: id_user }),
@@ -58,7 +58,7 @@ async function getUserProfile(id_user) {
 }
 
 async function deleteProfile(){
-    await fetch('http://localhost:8080/user', {
+    await fetch('https://marvelpwm.onrender.com/user', {
         method: "DELETE",
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({id: getUserId()}),
@@ -103,7 +103,7 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 async function getDataMarvelById(id) {
-    let r = await fetch('http://localhost:8080/characters/' + id).then(resp => resp.json()).then(data => { return data; });
+    let r = await fetch('https://marvelpwm.onrender.com/characters/' + id).then(resp => resp.json()).then(data => { return data; });
     return r;
 }
 
@@ -117,7 +117,7 @@ document.getElementById('fs').addEventListener('input', (event) => {
 
     if(newValue !== ''){
         typingTimer = setTimeout(async () => {
-            await fetch(`http://localhost:8080/characters/search/${newValue}`, {
+            await fetch(`https://marvelpwm.onrender.com/characters/search/${newValue}`, {
                 method: "GET",
                 headers: { 'Content-Type': 'application/json' },
                 redirect: "follow"
@@ -153,7 +153,7 @@ async function modify() {
         if(!error_flag && input.classList.contains('active') && (input.value !== '' || input.getAttribute('placeholder') !== '')){
             switch (input.id) {
                 case "inputName":
-                    await fetch('http://localhost:8080/user/changeUsername', {
+                    await fetch('https://marvelpwm.onrender.com/user/changeUsername', {
                         method: "POST",
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ id: id_user, username: input.value }),
@@ -164,7 +164,7 @@ async function modify() {
                     });
                     break;
                 case "inputPassword":
-                    await fetch('http://localhost:8080/user/changePassword', {
+                    await fetch('https://marvelpwm.onrender.com/user/changePassword', {
                         method: "POST",
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ id: id_user, password: input.value }),
@@ -176,7 +176,7 @@ async function modify() {
     
                     break;
                 case "fs":
-                    await fetch('http://localhost:8080/user/changeFavouteSuperhero', {
+                    await fetch('https://marvelpwm.onrender.com/user/changeFavouteSuperhero', {
                         method: "POST",
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({ id: id_user, fs: input.getAttribute('placeholder') }),
