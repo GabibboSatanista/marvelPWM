@@ -126,9 +126,14 @@ app.post("/trades", function (req, res) {
     utils.makeTrade(res, tradeId, userId);
 });
 
-app.get("/trades/active", function (req, res) {
-    const { userId, limit, offset } = req.query;
+app.post("/trades/active", function (req, res) {
+    const { userId, limit, offset } = req.body;
     utils.getActiveTrade(res, userId, limit, offset);
+});
+
+app.post("/trades/personal", function (req, res) {
+    const { userId, limit, offset } = req.body;
+    utils.getPersonalTrade(res, userId, limit, offset);
 });
 
 app.post("/trades/create", function (req, res) {

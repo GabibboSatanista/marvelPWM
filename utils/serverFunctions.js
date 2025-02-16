@@ -11,6 +11,7 @@ module.exports = {
     searchSuperHero: searchSuperHero,
     changeFavouteSuperhero: changeFavouteSuperhero,
     getActiveTrade: getActiveTrade,
+    getPersonalTrade: getPersonalTrade,
     makeTrade: makeTrade,
     postTrade: postTrade
 }
@@ -41,15 +42,15 @@ function addUser(res, user) {
         res.status(400).send("Nome troppo corto o mancante");
         return;
     }
-    if (user.password.length < 8) {
-        res.status(400).send("Password troppo corta o mancante");
+    if ( user.password.length < 8 || !/[A-Z]/.test(user.password) || !/[0-9]/.test(user.password) || !/[!@#$%^&*(),.?":{}|<>_]/.test(user.password)) {
+        res.status(400).send("Password semplice");
         return;
     }
     mdb.insertUserIntoDB(user, client).then(r => {
         if (r !== null) {
-            res.status(200).send(user['_id']);
+            res.status(200).send(r);
         } else {
-            res.status(400).send(r.message);
+            res.status(400).send(r);
         }
     }
     );
@@ -65,8 +66,8 @@ async function getUser(res, id) {
                 el.description = sh.description;
                 el.url = sh.thumbnail.url;
                 el.comics = sh.comics,
-                el.series = sh.series,
-                el.events = sh.events
+                    el.series = sh.series,
+                    el.events = sh.events
             }
             return res.status(200).send(r);
         } else {
@@ -82,10 +83,10 @@ async function getUser(res, id) {
 
 function deleteUser(res, id) {
     mdb.deleteUserById(id, client).then(r => {
-        if (r == false) {
-            return res.status(404).send("Account Inesistente")
+        if (r.success == false) {
+            return res.status(404).send(r)
         } else {
-            return res.status(200).send("OK");
+            return res.status(200).send(r);
         }
     });
 }
@@ -134,7 +135,7 @@ async function getCharacterById(res, characterId) {
     const timestamp = Date.now();
     const hash = CryptoJS.MD5(timestamp + privateKey + publicKey).toString(CryptoJS.enc.Hex);
     const url = `https://gateway.marvel.com/v1/public/characters/${characterId}?ts=${timestamp}&apikey=${publicKey}&hash=${hash}`;
-    console.log(url)
+
     try {
 
         const response = await fetch(url);
@@ -146,7 +147,7 @@ async function getCharacterById(res, characterId) {
 
 
         const data = await response.json();
-        
+
 
         if (data.code === 200) {
             const character = data.data.results[0];
@@ -156,9 +157,9 @@ async function getCharacterById(res, characterId) {
                 thumbnail: {
                     url: `${character.thumbnail.path}.${character.thumbnail.extension}`,
                 },
-                comics: character.comics.items.slice(0,3),
-                series: character.series.items.slice(0,3),
-                events: character.events.items.slice(0,3)
+                comics: character.comics.items.slice(0, 3),
+                series: character.series.items.slice(0, 3),
+                events: character.events.items.slice(0, 3)
             };
             res.status(data.code).send(JSON.stringify(essentials));
         } else {
@@ -177,7 +178,8 @@ async function openPack(res, userId) {
     try {
         let out = [];
         let data_out;
-        for (let i = 0; i < 5; i++) {
+        let i = 0
+        for (; i < 5; i++) {
             const timestamp = Date.now();
             const hash = CryptoJS.MD5(timestamp + privateKey + publicKey).toString(CryptoJS.enc.Hex);
 
@@ -186,13 +188,16 @@ async function openPack(res, userId) {
             const totalAvailable = 1500; // Numero massimo stimato di personaggi
             const randomOffset = Math.floor(Math.random() * totalAvailable);
 
-            const url = `${baseURL}?limit=${limit}&offset=${randomOffset}&apikey=${publicKey}&ts=${timestamp}&hash=${hash}`;
+            const url = `${baseURL}?limit=${limit}&offset=${randomOffset}&orderBy=name&apikey=${publicKey}&ts=${timestamp}&hash=${hash}`;
+
             const response = await fetch(url);
+
+            const data = await response.json();
             if (!response.ok) {
                 data_out = data;
                 break;
             }
-            const data = await response.json();
+
             const character = data.data.results[0];
             let essentials = {
                 id: character.id.toString(),
@@ -201,16 +206,20 @@ async function openPack(res, userId) {
                 thumbnail: {
                     url: `${character.thumbnail.path}.${character.thumbnail.extension}`,
                 },
-                comics: character.comics.items.slice(0,3),
-                series: character.series.items.slice(0,3),
-                events: character.events.items.slice(0,3)
+                comics: character.comics.items.slice(0, 3),
+                series: character.series.items.slice(0, 3),
+                events: character.events.items.slice(0, 3)
             };
-            data_out = data;
-            out.push(essentials);
+
+            if (essentials.description && !essentials.name.includes(":")) {
+                out.push(essentials);
+                data_out = data;
+            } else {
+                i -= 1
+            }
         }
 
         if (data_out.code === 200) {
-
             const r = await mdb.removeCredits(userId, 1, client);
             if (r.success == false) {
                 res.status(404).send(r.message);
@@ -219,7 +228,6 @@ async function openPack(res, userId) {
                 const rAdding = await mdb.addCardsToUser(userId, out, client);
                 if (rAdding.success == false) { res.status(404).send(rAdding.message); return; }
                 else { res.status(200).send(out); return; }
-                return;
             }
         } else {
             console.error("Errore API Marvel:", data_out);
@@ -233,6 +241,7 @@ async function openPack(res, userId) {
 }
 
 async function searchSuperHero(res, nameSH) {
+
     try {
         let out = [];
         let data_out;
@@ -240,13 +249,14 @@ async function searchSuperHero(res, nameSH) {
         const hash = CryptoJS.MD5(timestamp + privateKey + publicKey).toString(CryptoJS.enc.Hex);
 
         const baseURL = "https://gateway.marvel.com/v1/public/characters";
-        const limit = 5; // Numero di eroi da ottenere
-        const url = `${baseURL}?nameStartsWith=${nameSH}&orderBy=name&limit=${limit}&apikey=${publicKey}&ts=${timestamp}&hash=${hash}`;
+        const limit = 20; // Numero di eroi da ottenere
+        const url = `${baseURL}?nameStartsWith=${encodeURIComponent(nameSH)}&orderBy=name&limit=${limit}&apikey=${publicKey}&ts=${timestamp}&hash=${hash}`;
+
         const response = await fetch(url);
         const data = await response.json();
-        console.log(data);
 
         data.data.results.forEach(character => {
+
             let essentials = {
                 id: character.id.toString(),
                 name: character.name,
@@ -255,9 +265,14 @@ async function searchSuperHero(res, nameSH) {
                     url: `${character.thumbnail.path}.${character.thumbnail.extension}`,
                 },
             };
-            data_out = data;
-            out.push(essentials);
+
+            if (essentials.description && !essentials.name.includes(":")) {
+                out.push(essentials)
+                data_out = data
+            }
         })
+
+        out = out.splice(0, out.length >= 5 ? 5 : out.length)
 
         if (data_out.code === 200) {
             res.status(200).send(out);
@@ -296,20 +311,20 @@ async function getActiveTrade(res, userId, limit, offset) {
             res.status(404).send(r.message);
             return;
         } else {
-            
+
             for (const el of r.message) {
-                const user = await getUserInner(el.from); 
+                const user = await getUserInner(el.from);
                 el.username = user.username;
-                const fs = await getCharacterByIdInner(user.favourite_superhero); 
+                const fs = await getCharacterByIdInner(user.favourite_superhero);
                 el.favourite_superhero_image = fs.thumbnail.url;
                 for (const character of el.for) {
-                    if(character.id !== '#credits'){
-                        const c = await getCharacterByIdInner(character.id); 
+                    if (character.id !== '#credits') {
+                        const c = await getCharacterByIdInner(character.id);
                         character.name = c.name;
                     }
                 }
                 for (const character of el.want) {
-                    if(character.id !== '#credits'){
+                    if (character.id !== '#credits') {
                         const c = await getCharacterByIdInner(character.id);
                         character.name = c.name;
                     }
@@ -324,10 +339,25 @@ async function getActiveTrade(res, userId, limit, offset) {
     }
 }
 
+async function getPersonalTrade(res, userId, limit, offset) {
+    try {
+        const r = await mdb.getPersonalTrade(userId, limit, offset, client);
+
+        if (r.success == false) {
+            res.status(404).send(r.message);
+            return;
+        } else {
+            res.status(200).send(r.message);
+        }
+    } catch (error) {
+        console.error("Errore durante la richiesta:", error);
+        res.status(500).send('Internal error');
+    }
+}
+
 async function makeTrade(res, tradeId, userId) {
     try {
         const r = await mdb.makeTrade(tradeId, userId, client);
-        console.log(r.message)
         if (!r.success) {
             res.status(404).send(r.message);
         } else {
@@ -342,13 +372,13 @@ async function makeTrade(res, tradeId, userId) {
 async function postTrade(res, userId, give, wants) {
     try {
         for (const { id, count } of give) {
-            if(id != '#credits'){
+            if (id != '#credits') {
                 await getCharacterByIdInner(id);
             }
         }
 
         for (const { id, count } of wants) {
-            if(id != '#credits'){
+            if (id != '#credits') {
                 await getCharacterByIdInner(id);
             }
         }
@@ -369,7 +399,7 @@ async function getCharacterByIdInner(characterId) {
     const timestamp = Date.now();
     const hash = CryptoJS.MD5(timestamp + privateKey + publicKey).toString(CryptoJS.enc.Hex);
     const url = `https://gateway.marvel.com/v1/public/characters/${characterId}?ts=${timestamp}&apikey=${publicKey}&hash=${hash}`;
-    
+
     try {
         const response = await fetch(url);
 
@@ -387,9 +417,9 @@ async function getCharacterByIdInner(characterId) {
                 thumbnail: {
                     url: `${character.thumbnail.path}.${character.thumbnail.extension}`,
                 },
-                comics: character.comics.items.splice(0,3),
-                series: character.series.items.splice(0,3),
-                events: character.events.items.splice(0,3)
+                comics: character.comics.items.splice(0, 3),
+                series: character.series.items.splice(0, 3),
+                events: character.events.items.splice(0, 3)
             };
             return essentials;
         } else {
@@ -413,4 +443,3 @@ async function getUserInner(userId) {
         return null;
     }
 }
-

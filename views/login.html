@@ -66,19 +66,8 @@
       } else if (localStorage.getItem('user_id')) {
         return localStorage.getItem('user_id');
       }
-      console.error('Utente non loggato');
       return null;
     }
-
-    document.addEventListener('click', function (event) {
-      const dropdown = document.querySelector('.dropdown');
-      const dropdownMenu = dropdown.querySelector('.dropdown-menu');
-
-      // Check if the click happened outside the dropdown
-      if (!dropdown.contains(event.target)) {
-        dropdownMenu.classList.remove('show'); // Close the dropdown
-      }
-    });
 
     /*
     document.getElementById('password').addEventListener('change', function (event) {
@@ -131,17 +120,16 @@
       const r = await handleSubmit(event);
       if (r.success == false) {
         // Mostra un messaggio di errore o esegui altre azioni in caso di login non riuscito
-        //console.log(document.getElementById('remember_me').checked);
         alertShow();
       } else {
         alertOff();
-        window.location.href = "index.html/";
         let c = document.getElementById('remember_me').checked;
         if (c) {
           localStorage.setItem("user_id", r.id);
         } else {
           sessionStorage.setItem("user_id", r.id);
         }
+        window.location.href = "/index.html";
       }
 
     });

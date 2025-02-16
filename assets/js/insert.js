@@ -122,6 +122,21 @@ async function getUserProfile(id_user) {
     }
 }
 
+async function getPersonalActiveTrade(id_user){
+    try {
+        const resp = await fetch('http://localhost:8080/trades/personal', {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: id_user, limit: "100", offset: "0" }),
+            redirect: "follow"
+        })
+        const data = await resp.json();
+        return data;
+    }catch(error){
+        console.log(error)
+        window.location.href= '/';
+    }
+}
 
 async function loadOfferCardsPage() {
     let card_collection = document.getElementById('card_collection');
@@ -133,15 +148,25 @@ async function loadOfferCardsPage() {
     pageActivator('offer', false);
     history.pushState('offer', '', '#offer');
     userData = await getUserProfile(getUserId());
+    userTrade  = await getPersonalActiveTrade(getUserId());
+    
+    cardsAlreadyOnTrade = new Map()
+    userTrade.forEach(el =>{
+        el.for.forEach(c => {
+            cardsAlreadyOnTrade.set(c.id, cardsAlreadyOnTrade.has(c.id) ? cardsAlreadyOnTrade.get(c.id) + c.count : c.count)
+        })
+    })
+
     const offcanvas = document.getElementById('offcanvas');
 
     userData.collection.map(el => {
-        if (el.count > 1) {
+        el.count = el.count - (cardsAlreadyOnTrade.has(el.id) ? cardsAlreadyOnTrade.get(el.id) + 1 : 1)
+        if (el.count > 0) {
             let clone = toClone.cloneNode(true);
             clone.id = el.id;
             clone.getElementsByClassName('card-img')[0].src = el.url;
             clone.getElementsByClassName('card-title')[0].innerText = el.name;
-            clone.getElementsByClassName('card-text')[0].innerText = el.count - 1;
+            clone.getElementsByClassName('card-text')[0].innerText = el.count;
             clone.classList.remove('d-none');
             clone.addEventListener('click', function (event) {
                 event.preventDefault();
@@ -150,7 +175,7 @@ async function loadOfferCardsPage() {
                 img.src = el.url;
                 let title = offcanvas.getElementsByClassName('offcanvas-title')[0];
                 title.innerText = el.name;
-                inputNumber.max = el.count - 1
+                inputNumber.max = el.count
                 if (offeredCards.has(el.id)) {
                     inputNumber.value = offeredCards.get(el.id)
                 } else {

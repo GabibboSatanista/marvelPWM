@@ -36,22 +36,30 @@ function getUserId() {
     } else if (localStorage.getItem('user_id')) {
         return localStorage.getItem('user_id');
     }
-    
+
     console.error('Utente non loggato');
     window.location.href = '/';
     return null;
 }
 
 async function getUserProfile(id_user) {
-    const resp = await fetch('http://localhost:8080/user', {
-        method: "POST",
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: id_user }),
-        redirect: "follow"
-    })
-    const data = await resp.json();
-    console.log(data)
-    return data;
+    try {
+        const resp = await fetch('http://localhost:8080/user', {
+            method: "POST",
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: id_user }),
+            redirect: "follow"
+        })
+        const data = await resp.json();
+        return data;
+    } catch (error) {
+        if (sessionStorage.getItem('user_id')) {
+            sessionStorage.removeItem('user_id');
+        } else if (localStorage.getItem('user_id')) {
+            localStorage.removeItem('user_id');
+        }
+        window.location.href = '/';
+    }
 }
 
 
@@ -155,7 +163,6 @@ async function loadCollectionPage() {
         clone.classList.remove('d-none');
         clone.addEventListener('click', function (event) {
             event.preventDefault();
-            console.log(el)
             const ct = event.currentTarget;
             const offcanvasInstance = new bootstrap.Offcanvas(offcanvas);
             const img = offcanvas.getElementsByClassName('img-fluid')[0];
@@ -287,7 +294,7 @@ function deactivateSpinner(doc) {
 }
 
 
-function logout(){
+function logout() {
     if (sessionStorage.getItem('user_id')) {
         sessionStorage.removeItem('user_id');
     } else if (localStorage.getItem('user_id')) {

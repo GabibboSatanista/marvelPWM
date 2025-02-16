@@ -14,7 +14,7 @@
 </head>
 
 <body class="d-flex align-items-center justify-content-center min-vh-100 py-4 ">
-  <main class="m-auto text-center col col-12 col-md-6 col-lg-3">
+  <main class="m-auto text-center col col-12 col-md-7 col-lg-4">
     <div class="form-signin p-4 rounded">
       <div class="alert alert-danger d-none" id="alert" role="alert"></div>
       <section class="pb-4">
@@ -110,16 +110,17 @@
           body: JSON.stringify({ "email": email, "password": psw, "username": username, "favourite_superhero": fs }),
           redirect: "follow"
         });
-        console.log(resp);
+
+        const js = await resp.json();
         if (resp.ok) {
-          const js = await resp.json();
-          return { success: true, id: js._id };
+          return js;
         } else {
-          return resp.json();
+          return js;
         }
       } catch (error) {
         console.log(error)
-        return { success: false, message: 'Credenziali Errate.' };
+        alertShow("Errore in fase di registrazione")
+        return js;
       }
     }
 
@@ -142,21 +143,24 @@
       if (email.value != cemail.value) {
         email.classList.add('border', 'border-danger');
         cemail.classList.add('border', 'border-danger');
-        flag = true;
+        return {success: false, message: "Le email non coincidono."}
       }
 
-      if (psw.value != cpsw.value) {
+      if (psw.value.length < 8 || !/[A-Z]/.test(psw.value) || !/[0-9]/.test(psw.value) || !/[!@#$%^&*(),.?":{}|<>_]/.test(psw.value)) {
         psw.classList.add('border', 'border-danger');
-        cpsw.classList.add('border', 'border-danger');
-        flag = true;
+        return {success: false, message: "La password é troppo semplice."}
+      } else {
+        if (psw.value != cpsw.value) {
+          psw.classList.add('border', 'border-danger');
+          cpsw.classList.add('border', 'border-danger');
+          return {success: false, message: "Le password non coincidono."}
+        }
       }
 
       if (usr.value.length < 5) {
         usr.classList.add('border', 'border-danger');
-        flag = true;
+        return {success: false, message: "Username troppo corto."}
       }
-
-      if (flag) { return; }
 
       const r = await register(email.value, psw.value, usr.value, sp.getAttribute('placeholder'));
       return r;
@@ -165,17 +169,18 @@
     document.getElementById('loginForm').addEventListener('submit', async function (event) {
       event.preventDefault();
       const r = await handleSubmit(event);
+      console.log(r)
       if (r.success == false) {
         alertShow(r.message);
       } else {
         alertOff();
-        window.location.href = "index.html/";
         let c = document.getElementById('remember_me').checked;
         if (c) {
-          localStorage.setItem("user_id", r.toString());
+          localStorage.setItem("user_id", r.id);
         } else {
-          sessionStorage.setItem("user_id", r.toString());
+          sessionStorage.setItem("user_id", r.id);
         }
+        window.location.href = "/index.html";
       }
 
     });
@@ -200,7 +205,6 @@
           })
             .then(resp => resp.json())
             .then(data => {
-              console.log(data);
               data.forEach(sp => {
                 let li = document.createElement('li');
                 let a = document.createElement('a');

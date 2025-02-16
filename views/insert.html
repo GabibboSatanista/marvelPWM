@@ -23,13 +23,14 @@
         </header>
 
         <main class="container mt-3 mb-5 mx-auto col-12 col-md-6 col-lg-4">
-            <!--<div class="spinner-border d-none position-absolute top-50 start-50" role="status">
+            <div class="spinner-border d-none position-absolute top-50 start-50" role="status">
                 <span class="visually-hidden">Loading...</span>
-            </div>-->
-            <div class="row justify-content-center mb-3" id="card_collection"
-                style="min-height: 80vh; overflow-y: scroll; scrollbar-width: none;">
-                <div class="col-4 col-md-4 col-lg-4 mb-3 mt-2 d-none">
-                    <div class="card text-bg-dark">
+            </div>
+
+            <div class="row justify-content-center mb-3" id="card_collection" style="max-height: 83vh; overflow-y: scroll; scrollbar-width: none;">
+
+                <div class="col-4 col-md-4 col-lg-4 mb-3 d-none">
+                    <div class="card text-bg-dark mx-auto">
                         <img class="card-img img-fluid cover-img" alt="...">
                         <div class="card-img-overlay h-100 w-100">
                             <div class="position-absolute bottom-0 start-0 w-100"
@@ -40,6 +41,7 @@
                         </div>
                     </div>
                 </div>
+
             </div>
         </main>
 
@@ -50,8 +52,8 @@
         </div>
 
         <div class="offcanvas offcanvas-bottom mx-auto col-12 col-md-8 col-lg-4" tabindex="-1" id="offcanvas" aria-labelledby="offcanvasLabel" style="height: 60%;">
-            <div class="w-100" style="min-height: 65% ; overflow-y: hidden; scrollbar-width: none;">
-                <img class="img-fluid">
+            <div class="d-flex align-items-center" style="max-height: 500px; width: 100%; overflow: hidden;">
+                <img class="img-fluid w-100">
             </div>
             <div class="offcanvas-header">
                 <h1 class="offcanvas-title" id="offcanvasLabel"></h1>

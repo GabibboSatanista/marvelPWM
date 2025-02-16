@@ -18,9 +18,10 @@ document.addEventListener('DOMContentLoaded', async function () {
 
 
 async function loadActiveTrades() {
-    await fetch(`http://localhost:8080/trades/active?userId=${getUserId()}&limit=100&offset=0`, {
-        method: "GET",
+    await fetch(`http://localhost:8080/trades/active`, {
+        method: "POST",
         headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: getUserId(), limit: 100, offset: 0 }),
         redirect: "follow"
     })
         .then(resp => resp.json())

@@ -14,6 +14,7 @@ module.exports = {
     addCredits: addCredits,
     changeFavouteSuperhero: changeFavouteSuperhero,
     getActiveTrade: getActiveTrade,
+    getPersonalTrade: getPersonalTrade,
     makeTrade: makeTrade,
     postTrade: postTrade
 }
@@ -69,11 +70,10 @@ async function insertUserIntoDB(data, client) {
         data.collection = [];
         data.credits = Number('0');
         let resp = await users.insertOne(data);
-
-        return;
+        return { success: true, id: resp.insertedId.toString() };
     } catch (error) {
-        console.log(error);
-        return null;
+        console.error(error);
+        return { success: false, message: "Errore in fase di registrazione." };
     } finally {
         await closeClientConnection(client)
     }
@@ -87,7 +87,7 @@ async function searchingByEmailEPAss(email, password, client) {
         collection = await connectingToTestServer(client, dbName, collectionName);
         return await collection.findOne({ email: email, password: encrypt(password) });
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return undefined;
     } finally {
         await closeClientConnection(client);
@@ -103,7 +103,7 @@ async function getUserFromDB(id, client) {
         const objectId = new ObjectId(id);
         return await collection.findOne({ _id: objectId });
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return undefined;
     } finally {
         await closeClientConnection(client);
@@ -115,17 +115,19 @@ async function getUserFromDB(id, client) {
 async function deleteUserById(id, client) {
     require("dotenv").config();
     const dbName = process.env.db_name;
-    const collectionName = process.env.collection_users;
+    const collectionTrades = process.env.collection_trades;
+    const collectionUsers = process.env.collection_users;
     const { ObjectId } = require('mongodb');
     try {
-        collection = await connectingToTestServer(client, dbName, collectionName);
+        const usersCollection = await connectingToTestServer(client, dbName, collectionUsers);
+        const tradesCollection = await connectingToTestServer(client, dbName, collectionTrades);
         const objectId = new ObjectId(id);
-        res = await collection.deleteOne({ _id: objectId });
-        console.log(res);
-        if (res.deletedCount == 0) { return false; } else { return true; }
+        resUser = await usersCollection.deleteOne({ _id: objectId });
+        resTrades = await tradesCollection.deleteOne({from: id})
+        if (resUser.deletedCount == 0) { return {success: false, message: "Utente inesistente"} } else { return {success: true, message: "Utente eliminato con successo"}; }
     } catch (error) {
-        console.log(error);
-        return false;
+        console.error(error);
+        return {success: false, message: "Errore in fase di eliminazione"};
     } finally {
         await closeClientConnection(client);
     }
@@ -156,7 +158,7 @@ async function changePassword(id, newPsw, client) {
             return { success: false, message: "Errore durante l'aggiornamento della password" };
         }
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return { success: false, message: "Errore durante l'aggiornamento della password" };
     } finally {
         await closeClientConnection(client);
@@ -191,7 +193,7 @@ async function changeUsername(id, newUsr, client) {
             return { success: false, message: "Errore durante l'aggiornamento dell'username." };
         }
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return { success: false, message: "Errore durante l'aggiornamento della username." };
     } finally {
         await closeClientConnection(client);
@@ -223,7 +225,7 @@ async function changeFavouteSuperhero(id, fs, client) {
             return { success: false, message: "Errore durante l'aggiornamento del super erore preferito." };
         }
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return { success: false, message: "Errore durante l'aggiornamento del super erore preferito." };
     } finally {
         await closeClientConnection(client);
@@ -238,7 +240,6 @@ async function removeCredits(id, credits_to_remove, client) {
     try {
         collection = await connectingToTestServer(client, dbName, collectionName);
         const objectId = new ObjectId(id);
-        console.log(id);
         const usr = await collection.findOne({ _id: objectId });
         if (!usr) {
             return { success: false, message: "Utente non trovato." };
@@ -260,7 +261,7 @@ async function removeCredits(id, credits_to_remove, client) {
             return { success: false, message: "Errore durante l'aggiornamento crediti." };
         }
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return { success: false, message: "Errore durante l'aggiornamento crediti." };
     } finally {
         await closeClientConnection(client);
@@ -275,7 +276,6 @@ async function addCredits(id, credits_to_add, client) {
     try {
         collection = await connectingToTestServer(client, dbName, collectionName);
         const objectId = new ObjectId(id);
-        console.log(id);
         const usr = await collection.findOne({ _id: objectId });
 
         
@@ -300,7 +300,7 @@ async function addCredits(id, credits_to_add, client) {
             return { success: false, message: "Errore durante l'aggiornamento crediti." };
         }
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return { success: false, message: "Errore durante l'aggiornamento crediti." };
     } finally {
         await closeClientConnection(client);
@@ -343,7 +343,7 @@ async function addCardsToUser(userId, newCards, client) {
             return { success: false, message: "Errore durante l'aggiornamento delle carte." };
         }
     } catch (error) {
-        console.log(error);
+        console.error(error);
         return { success: false, message: error };
     } finally {
         await closeClientConnection(client);
@@ -379,12 +379,30 @@ async function getActiveTrade(userId, limit, offset, client) {
     try {
         collection = await connectingToTestServer(client, dbName, collectionName);
         const objectId = new ObjectId(userId);
-        const trades = await collection.find({ from: { $ne: objectId } }).skip(parseInt(offset, 10)).limit(parseInt(limit, 10)).toArray();
+        const trades = await collection.find({ from: { $ne: userId } }).skip(parseInt(offset, 10)).limit(parseInt(limit, 10)).toArray();
 
         if (!trades) { return { success: false, message: "Nessuno scambio disponibile" } };
         return { success: true, message: trades };
     } catch (error) {
-        console.log(error);
+        console.error(error);
+        return { success: false, message: error };
+    } finally {
+        await closeClientConnection(client);
+    }
+}
+
+async function getPersonalTrade(userId, limit, offset, client){
+    require("dotenv").config(); changeUsername
+    const dbName = process.env.db_name;
+    const collectionName = process.env.collection_trades;
+    const { ObjectId } = require('mongodb');
+    try {   
+        collection = await connectingToTestServer(client, dbName, collectionName);
+        const trades = await collection.find({ from: userId }).skip(parseInt(offset, 10)).limit(parseInt(limit, 10)).toArray();
+        if (!trades) { return { success: false, message: "Nessuno scambio disponibile" } };
+        return { success: true, message: trades };
+    } catch (error) {
+        console.error(error);
         return { success: false, message: error };
     } finally {
         await closeClientConnection(client);
@@ -538,7 +556,6 @@ async function postTrade(userId, give, wants, client) {
         const tradesCollection = await connectingToTestServer(client, dbName, collectionTrades);
         const user = await usersCollection.findOne({ _id: new ObjectId(userId) });
         const userActiveTrades = await tradesCollection.find({ from: userId }).toArray();
-        console.log(userActiveTrades)
         if (!user) { return { success: false, message: "Utente non trovato" }; }
 
         let activeTradesMap = new Map();

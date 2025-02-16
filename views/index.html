@@ -13,7 +13,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Orbitron&display=swap" rel="stylesheet">
 </head>
 
-<body class="justify-content-center" style="">
+<body class="justify-content-center">
 
     <!--MAIN PAGE-->
     <div id="mainPage">
@@ -32,7 +32,7 @@
         </header>
 
 
-        <main class="container pt-5 mx-auto col-12 col-md-6 col-lg-3" style="min-height: 83vh;">
+        <main class="container pt-5 mx-auto col-12 col-md-6 col-lg-3 mb-5" style="min-height: 83vh;">
             <div class="spinner-border d-none position-absolute top-50 start-50" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
@@ -135,7 +135,7 @@
                 <h1 class="offcanvas-title" id="offcanvasLabel">Offcanvas</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
             </div>
-            <div class="offcanvas-body mx-2" style="overflow-y:hidden; scrollbar-width: none;">
+            <div class="offcanvas-body mx-2" style="overflow-y:scroll; scrollbar-width: none;">
             </div>
         </div>
     </div>
@@ -145,13 +145,13 @@
         <header class="text-center shadow p-1 mx-auto col-12 col-md-6 col-lg-4">
             <h1 class="my-4">Carte Ottenute</h1>
         </header>
-        <main class="container mt-5 mb-5 mx-auto col-12 col-md-6 col-lg-4">
+        <main class="container mt-2 mb-5 mx-auto col-12 col-md-6 col-lg-4" style="max-height: 80vh; overflow-y: scroll; scrollbar-width: none;">
 
             <div class="spinner-border d-none position-absolute top-50 start-50" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
 
-            <div class="row justify-content-center" id="packCards" style="max-height: 80vh; overflow-y: scroll; scrollbar-width: none;">
+            <div class="row justify-content-center" id="packCards">
                 <div class="col-12 mb-3 d-none">
                     <div class="card text-bg-dark">
                         <img class="card-img img-fluid cover-img" alt="...">

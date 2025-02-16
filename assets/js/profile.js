@@ -57,6 +57,25 @@ async function getUserProfile(id_user) {
     }
 }
 
+async function deleteProfile(){
+    await fetch('http://localhost:8080/user', {
+        method: "DELETE",
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({id: getUserId()}),
+        redirect: "follow"
+    }).then(resp => resp.json())
+    .then(data => {
+        console.log(data)
+        if(sessionStorage.getItem('user_id')){
+            sessionStorage.removeItem('user_id')
+        }else if(localStorage.getItem('user_id')){
+            localStorage.removeItem('user_id')
+        }
+        window.location.href = '/'
+    })
+    .catch(error => console.log(error))
+}
+
 document.addEventListener('click', function (event) {
     const dropdown = document.querySelector('.dropdown');
     const dropdownMenu = dropdown.querySelector('.dropdown-menu');
@@ -65,6 +84,22 @@ document.addEventListener('click', function (event) {
     if (!dropdown.contains(event.target)) {
         dropdownMenu.classList.remove('show'); 
     }
+});
+
+document.addEventListener("DOMContentLoaded", function() {
+    const input = document.querySelectorAll(".fake-disabled");
+    function activateInput(event) {
+        event.preventDefault()
+        if(event.currentTarget.id === 'inputEmail'){return}
+        event.currentTarget.classList.add("active");
+        event.currentTarget.removeAttribute("readonly");
+        event.currentTarget.focus()
+    }
+
+    input.forEach(el => {
+        el.addEventListener("dblclick", (event) => {activateInput(event)});  // Desktop
+        el.addEventListener("touchstart", (event) => {activateInput(event)}); // Mobile
+    })
 });
 
 async function getDataMarvelById(id) {

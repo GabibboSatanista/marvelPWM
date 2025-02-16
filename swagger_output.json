@@ -81,6 +81,26 @@
         }
       }
     },
+    "/insert.html": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/assets/images/marvelBackgroundImage.png": {
+      "get": {
+        "description": "",
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/login": {
       "post": {
         "description": "",
@@ -312,32 +332,7 @@
         }
       }
     },
-    "/trades/active": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "status",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "limit",
-            "in": "query",
-            "type": "string"
-          },
-          {
-            "name": "offset",
-            "in": "query",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "default": {
-            "description": ""
-          }
-        }
-      },
+    "/trades": {
       "post": {
         "description": "",
         "parameters": [
@@ -349,6 +344,9 @@
               "properties": {
                 "tradeId": {
                   "example": "any"
+                },
+                "userId": {
+                  "example": "any"
                 }
               }
             }
@@ -357,6 +355,96 @@
         "responses": {
           "default": {
             "description": ""
+          }
+        }
+      }
+    },
+    "/trades/active": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "example": "any"
+                },
+                "limit": {
+                  "example": "any"
+                },
+                "offset": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/trades/personal": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "example": "any"
+                },
+                "limit": {
+                  "example": "any"
+                },
+                "offset": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/trades/create": {
+      "post": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userId": {
+                  "example": "any"
+                },
+                "give": {
+                  "example": "any"
+                },
+                "wants": {
+                  "example": "any"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request"
           }
         }
       }
